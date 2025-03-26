@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.35806.103 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAPBot", "sapbot\SAPBot.csproj", "{2E0C1105-B804-8ED2-7A3A-1C7CE926EB7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E0C1105-B804-8ED2-7A3A-1C7CE926EB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E0C1105-B804-8ED2-7A3A-1C7CE926EB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E0C1105-B804-8ED2-7A3A-1C7CE926EB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E0C1105-B804-8ED2-7A3A-1C7CE926EB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47996AE5-C300-41C6-8CB8-CB79C0BFB6DE}
+	EndGlobalSection
+EndGlobal
