@@ -26,9 +26,6 @@ jobs:
         id: date
         run: echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')"
 
-      - name: LS
-        run: ls
-
       - name: Build & Push
         uses: docker/build-push-action@v2
         with:
