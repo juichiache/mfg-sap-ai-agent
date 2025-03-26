@@ -17,10 +17,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Build Docker image
-        run: docker build -t sapagent .
-
+        
       - name: Log in to ACR
         uses: docker/login-action@v1
         with:
