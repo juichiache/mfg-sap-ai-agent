@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app/api
     outputs:
       image-name: ${{ steps.image-name.outputs.IMAGE_NAME }}
       image-version: ${{ steps.image-name.outputs.IMAGE_VERSION }}
