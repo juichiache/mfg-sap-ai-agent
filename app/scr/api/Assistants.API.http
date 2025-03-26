@@ -1,0 +1,58 @@
+@baseUrl = https://localhost:32777
+#@baseUrl = https://assistanthubservice.redsand-8dccfc71.eastus.azurecontainerapps.io
+
+// C1
+
+POST {{baseUrl}}/api/chat/weather
+Content-Type: application/json
+
+[
+  {
+    "user": "What is the forcast"
+  }
+]
+
+### C1
+
+POST {{baseUrl}}/api/chat/weather
+Content-Type: application/json
+
+[
+  {
+    "user": "What is the forcast for Mankato M",
+    "assistant": "string"
+  }
+]
+
+### Service Now
+
+POST {{baseUrl}}/api/chat/servicenow
+Content-Type: application/json
+
+[
+  {
+    "user": "Are their any incidents impacting VPN?"
+  }
+]
+
+### Auto
+
+POST {{baseUrl}}/api/chat/rag/autoserviceadvisor
+Content-Type: application/json
+
+[
+  {
+    "user": "What type of oil do I need?"
+  }
+]
+
+### Agent
+
+POST {{baseUrl}}/api/chat/agent
+Content-Type: application/json
+
+[
+  {
+    "user": "I need to solve the equation 3x + 11 = 14. Can you help me?"
+  }
+]

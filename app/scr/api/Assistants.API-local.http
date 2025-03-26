@@ -1,0 +1,32 @@
+@baseUrl = https://assistanthubservice.redsand-8dccfc71.eastus.azurecontainerapps.io
+
+
+// C1
+
+POST {{baseUrl}}/api/chat/weather
+Content-Type: application/json
+X-Api-Key: 5ead0096-bcda-4b91-8245-28d95468ce63
+
+[
+  { "User": "What is the forcast for Mankato MN." }
+]
+
+### C1
+
+POST {{baseUrl}}/api/chat/weather
+Content-Type: application/json
+
+[
+  {
+    "user": "string",
+    "assistant": "string"
+  }
+]
+
+
+### C2
+POST {{baseUrl}}/api/chat/weather
+Content-Type: application/json
+X-Api-Key: 5ead0096-bcda-4b91-8245-28d95468ce63
+
+[{"User":"weather forecast for mankato","Assistant":null}]
