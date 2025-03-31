@@ -50,6 +50,7 @@ namespace Assistants.API.Core
                 return facade;
             });
 
+            services.AddSingleton<SAPChatService>();
             services.AddSingleton<AutoAdvisorAgent>();
             services.AddSingleton<RAGChatService>();
             services.AddSingleton<WeatherChatService>();

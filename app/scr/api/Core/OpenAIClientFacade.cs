@@ -53,6 +53,11 @@ namespace Assistants.API.Core
             {
                 kernel.ImportPluginFromObject(new RAGRetrivalPlugins(_searchClientFactory, _standardChatGptClient), "RAGChat");
             }
+
+            if (toolPackage == "SAP")
+            {
+                kernel.ImportPluginFromObject(new SAPRetrivalPlugins(_httpClientFactory), "SAPChat");
+            }
             //kernel.ImportPluginFromObject(knowledgePlugin, DefaultSettings.DocumentRetrievalPluginName);
             //kernel.ImportPluginFromObject(serviceNowPlugin, "ServiceNow");
 

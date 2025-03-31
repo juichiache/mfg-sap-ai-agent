@@ -24,6 +24,8 @@ namespace Assistants.API
 
             api.MapPost("chat/agent", ProcessAgentRequestV2);
 
+            api.MapPost("chat/sap", ProcessSAPRequest);
+
             api.MapGet("status", ProcessStatusGet);
             return app;
         }
@@ -61,6 +63,14 @@ namespace Assistants.API
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessAgentRequestV2(ChatTurn[] request, [FromServices] AutoAdvisorAgent agent, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var chunk in agent.Execute(request).WithCancellation(cancellationToken))
+            {
+                yield return chunk;
+            }
+        }
+
+        private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPRequest(ChatTurn[] request, [FromServices] SAPChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
             {
                 yield return chunk;
             }
