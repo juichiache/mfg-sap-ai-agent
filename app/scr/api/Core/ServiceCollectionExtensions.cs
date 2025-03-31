@@ -24,20 +24,16 @@ namespace Assistants.API.Core
                 client.BaseAddress = new Uri("https://api.weather.gov/");
             });
 
-            services.AddHttpClient("ServiceNowAPI", client =>
+            var azureSearchServiceKey = configuration["AzureSearchServiceEndpoint"];
+            if (!string.IsNullOrEmpty(azureSearchServiceKey))
             {
-                string serviceNowInstanceUrl = configuration["ServiceNowInstanceUrl"];
-                string serviceNowUsername = configuration["ServiceNowUsername"];
-                string serviceNowPassword = configuration["ServiceNowPassword"];
-                client.BaseAddress = new Uri(serviceNowInstanceUrl);
-                var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{serviceNowUsername}:{serviceNowPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
-            });
-            services.AddSingleton<SearchClientFactory>(sp =>
-            {
-                var config = sp.GetRequiredService<IConfiguration>();
-                return new SearchClientFactory(config, null, new AzureKeyCredential(config[AppConfigurationSetting.AzureSearchServiceKey]));
-            });
+                services.AddSingleton<SearchClientFactory>(sp =>
+                {
+                    var config = sp.GetRequiredService<IConfiguration>();
+                    return new SearchClientFactory(config, null, new AzureKeyCredential(azureSearchServiceKey));
+                });
+            }
+
             services.AddSingleton<OpenAIClientFacade>(sp =>
             {
                 var config = sp.GetRequiredService<IConfiguration>();
@@ -54,7 +50,6 @@ namespace Assistants.API.Core
             services.AddSingleton<AutoAdvisorAgent>();
             services.AddSingleton<RAGChatService>();
             services.AddSingleton<WeatherChatService>();
-            services.AddSingleton<ServiceNowChatService>();
             services.AddSingleton<AutoDamageAnalysisChatService>();
             return services;
         }

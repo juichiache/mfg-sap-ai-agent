@@ -19,7 +19,6 @@ namespace Assistants.API
             var api = app.MapGroup("api");
             api.MapPost("chat/weather", ProcessWeatherRequest);
             api.MapPost("chat/autobodydamageanalysis", ProcessAutoDamageAnalysis);
-            api.MapPost("chat/servicenow", ProcessServiceNowRequest);
             api.MapPost("chat/rag/{agentName}", ProcessRagRequest);
 
             api.MapPost("chat/agent", ProcessAgentRequestV2);
@@ -40,14 +39,6 @@ namespace Assistants.API
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessAutoDamageAnalysis (ChatTurn[] request, [FromServices] AutoDamageAnalysisChatService autoDamageAnalysisChatService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var chunk in autoDamageAnalysisChatService.ReplyPlannerAsync(request).WithCancellation(cancellationToken))
-            {
-                yield return chunk;
-            }
-        }
-
-        private static async IAsyncEnumerable<ChatChunkResponse> ProcessServiceNowRequest(ChatTurn[] request, [FromServices] ServiceNowChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            await foreach (var chunk in aiService.ReplyPlannerAsync(request).WithCancellation(cancellationToken))
             {
                 yield return chunk;
             }
