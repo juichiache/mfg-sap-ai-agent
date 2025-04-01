@@ -6,12 +6,14 @@ using System.Net.Http;
 using System.Text;
 using Microsoft.Agents.Authentication;
 using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Protocols.Connector;
-using Microsoft.Agents.Protocols.Primitives;
 using MinimalApi.Services.Search;
 using Assistants.Hub.API.Assistants.RAG;
 using Azure;
 using Assistants.Hub.API.Assistants;
+using Microsoft.Agents.BotBuilder;
+using Microsoft.Agents.BotBuilder.App;
+using Assistants.Hub.API.Core;
+using Assistants.Hub.API;
 
 namespace Assistants.API.Core
 {
@@ -57,7 +59,7 @@ namespace Assistants.API.Core
 
         public static IHostApplicationBuilder AddBot<TBot, THandler>(this IHostApplicationBuilder builder) where TBot : IBot where THandler : class, TBot
         {
-            // builder.Services.AddBotAspNetAuthentication(builder.Configuration);
+             builder.Services.AddBotAspNetAuthentication(builder.Configuration);
 
             // Add Connections object to access configured token connections.
             builder.Services.AddSingleton<IConnections, ConfigurationConnections>();
@@ -67,9 +69,11 @@ namespace Assistants.API.Core
 
             // Add the BotAdapter, this is the default adapter that works with Azure Bot Service and Activity Protocol.
             builder.Services.AddCloudAdapter();
+            builder.Services.AddTransient<AgentApplicationOptions>();
 
             // Add the Bot,  this is the primary worker for the bot. 
-            builder.Services.AddTransient<IBot, THandler>();
+            //builder.Services.AddTransient<IBot, THandler>();
+            builder.AddBot<THandler>();
 
             return builder;
         }

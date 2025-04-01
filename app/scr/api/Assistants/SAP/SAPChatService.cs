@@ -9,7 +9,7 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace Assistants.Hub.API.Assistants.RAG;
 
-internal sealed class SAPChatService
+public class SAPChatService
 {
     private readonly ILogger<SAPChatService> _logger;
     private readonly IConfiguration _configuration;
@@ -26,6 +26,22 @@ internal sealed class SAPChatService
 
     public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatTurn[] chatMessages, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        var chatHistory = new ChatHistory();
+        foreach (var turn in chatMessages)
+        {
+            chatHistory.AddUserMessage(turn.User);
+            if (!string.IsNullOrEmpty(turn.Assistant))
+                chatHistory.AddAssistantMessage(turn.Assistant);
+        }
+
+        await foreach (var chunk in ExecuteAsync(chatHistory, cancellationToken))
+        {
+            yield return chunk;
+        }
+    }
+
+    public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatHistory chatHistory, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
         var sw = Stopwatch.StartNew();
 
         // Kernel setup
@@ -35,13 +51,7 @@ internal sealed class SAPChatService
 
         // Build Chat History
         var systemPrompt = PromptService.GetPromptByName("SAPAgentSystemPrompt");
-        var chatHistory = new ChatHistory(systemPrompt);
-        foreach (var turn in chatMessages)
-        {
-            chatHistory.AddUserMessage(turn.User);
-            if(!string.IsNullOrEmpty(turn.Assistant))
-                chatHistory.AddAssistantMessage(turn.Assistant);
-        }
+        chatHistory.AddSystemMessage(systemPrompt);
 
         // Execute Chat Completion
         var executionSettings = new OpenAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };

@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Services;
 using System.Runtime.CompilerServices;
 using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Protocols.Primitives;
 using Assistants.Hub.API.Assistants.RAG;
 using Assistants.Hub.API.Assistants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.SemanticKernel.Services;
+using Microsoft.Agents.BotBuilder;
+using Assistants.Hub.API;
 
 namespace Assistants.API
 {
@@ -24,6 +25,8 @@ namespace Assistants.API
             api.MapPost("chat/agent", ProcessAgentRequestV2);
 
             api.MapPost("chat/sap", ProcessSAPRequest);
+
+            api.MapPost("messages", ProcessAgentRequest);
 
             api.MapGet("status", ProcessStatusGet);
             return app;
@@ -72,9 +75,9 @@ namespace Assistants.API
             return Results.Ok("OK");
         }
 
-        private static async Task ProcessAgentRequest(HttpRequest request, HttpResponse response,[FromServices] IBotHttpAdapter adapter, IBot bot, CancellationToken cancellationToken)
+        private static async Task ProcessAgentRequest(HttpRequest request, HttpResponse response,[FromServices]IBotHttpAdapter adapter, IBot bot, CancellationToken cancellationToken)
         {
-            await adapter.ProcessAsync(request, response, bot, cancellationToken);
+            await adapter.ProcessAsync(request, response, bot, cancellationToken);            
         }
     }
 }

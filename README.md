@@ -50,8 +50,6 @@
 
     1.  Enable Channels->Microsoft Teams
 
-    1.  Copy the `Microsoft App ID`
-
 1.  Configure application settings
 
 1.  Build M365 manifest
@@ -80,7 +78,7 @@
 
         1.  Click `Create a new bot`
 
-        1.  Select `Enter a bot ID` and enter the `Microsoft App ID` from the Azure Bot service.
+        1.  Select `Enter a bot ID` and enter the `Entra ID Application (client) ID` from the Azure Bot service.
 
         1.  Under `Select the scopes where people can use your bot`, select `Personal` and `Group Chat`.
 
