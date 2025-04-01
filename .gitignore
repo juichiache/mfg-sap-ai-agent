@@ -82,8 +82,11 @@ StyleCopReport.xml
 *.pgc
 *.pgd
 *.rsp
+<<<<<<< HEAD
 # but not Directory.Build.rsp, as it configures directory-level build defaults
 !Directory.Build.rsp
+=======
+>>>>>>> main
 *.sbr
 *.tlb
 *.tli
@@ -398,3 +401,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+api/Assistants.API/appsettings.Development.json
+api/appsettings.Development.json
+api/Assistants.API-local.http
+app/infra/bicep/main-v2.bicepparam
+app/infra/bicep/main.bicepparam
+app/scr/api/appsettings.Development.json
