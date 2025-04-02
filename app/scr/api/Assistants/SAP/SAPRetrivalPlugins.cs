@@ -31,35 +31,49 @@ public class SAPRetrivalPlugins
     public async Task<string> GetInboundDeliveryAsync()
     {
         using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
-        //httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
-        httpClient.DefaultRequestHeaders.Add("accept", "application/json");
+        httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
+        //httpClient.DefaultRequestHeaders.Add("accept", "application/json");
 
         // Make the API call to get inventory data
-        var response = await httpClient.GetAsync($"inbound-deliveries?dateFrom=2025-01-01&dateTo=2025-04-02&code={_apiKey}");
+        var response = await httpClient.GetAsync($"inbound-deliveries?dateFrom=2025-01-01&dateTo=2025-04-02");
         response.EnsureSuccessStatusCode();
 
         var responseBody = await response.Content.ReadAsStringAsync();
         return responseBody;
     }
 
-    //[Description("GetInventory")]
-    //[return: Description("A list of inventory items")]
-    //public async Task<List<InventoryItem>> GetInventoryAsync()
-    //{
-    //    using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
-    //    httpClient.DefaultRequestHeaders.Add("KEY", _apiKey);
+    [KernelFunction("GetInventory")]
+    [Description("Get a list of current inventory")]
+    [return: Description("A list of inventory items")]
+    public async Task<string> GetInventoryAsync()
+    {
+        using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
+        httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
 
-    //    // Make the API call to get inventory data
-    //    var response = await httpClient.GetAsync("/inbound-deliveries");
-    //    response.EnsureSuccessStatusCode();
+        // Make the API call to get inventory data
+        var response = await httpClient.GetAsync("inventory");
+        response.EnsureSuccessStatusCode();
 
-    //    var responseBody = await response.Content.ReadAsStringAsync();
-    //    var inventoryItems = JsonConvert.DeserializeObject<List<InventoryItem>>(responseBody);
+        var responseBody = await response.Content.ReadAsStringAsync();
+        return responseBody;
+    }
 
-    //    return inventoryItems;
-    //}
+    [KernelFunction("GetPurchaseOrders")]
+    [Description("Get a list of current purchase orders")]
+    [return: Description("A list of purchase orders")]
+    public async Task<string> GetPurchaseOrdersAsync()
+    {
+        using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
+        httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
 
+        // Make the API call to get inventory data
+        var response = await httpClient.GetAsync("purchase-orders");
+        response.EnsureSuccessStatusCode();
 
+        var responseBody = await response.Content.ReadAsStringAsync();
+ 
+        return responseBody;
+    }
 
     //[Description("GetCommodityPricesAsync ")]
     //[return: Description("A list of inbound deliveries")]
@@ -95,22 +109,7 @@ public class SAPRetrivalPlugins
     //    return inventoryItems;
     //}
 
-    //[Description("GetPurchaseOrdersAsync ")]
-    //[return: Description("A list of purchase orders")]
-    //public async Task<List<PurchaseOrder>> GetPurchaseOrdersAsync()
-    //{
-    //    using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
-    //    httpClient.DefaultRequestHeaders.Add("User-Agent", "app");
 
-    //    // Make the API call to get inventory data
-    //    var response = await httpClient.GetAsync("po");
-    //    response.EnsureSuccessStatusCode();
-
-    //    var responseBody = await response.Content.ReadAsStringAsync();
-    //    var inventoryItems = JsonConvert.DeserializeObject<List<PurchaseOrder>>(responseBody);
-
-    //    return inventoryItems;
-    //}
 
     [KernelFunction("GetWeatherForecast")]
     [Description("Get weather forecast for a specified location point")]
