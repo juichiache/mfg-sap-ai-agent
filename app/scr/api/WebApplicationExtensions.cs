@@ -8,8 +8,9 @@ using Assistants.Hub.API.Assistants.RAG;
 using Assistants.Hub.API.Assistants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.SemanticKernel.Services;
-using Microsoft.Agents.BotBuilder;
 using Assistants.Hub.API;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Agents.Builder;
 
 namespace Assistants.API
 {
@@ -75,7 +76,7 @@ namespace Assistants.API
             return Results.Ok("OK");
         }
 
-        private static async Task ProcessAgentRequest(HttpRequest request, HttpResponse response,[FromServices]IBotHttpAdapter adapter, IBot bot, CancellationToken cancellationToken)
+        private static async Task ProcessAgentRequest(HttpRequest request, HttpResponse response,[FromServices]IAgentHttpAdapter adapter, IAgent bot, CancellationToken cancellationToken)
         {
             await adapter.ProcessAsync(request, response, bot, cancellationToken);            
         }

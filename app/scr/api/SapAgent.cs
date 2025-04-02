@@ -1,8 +1,8 @@
 ﻿using Assistants.API.Core;
 using Assistants.Hub.API.Assistants.RAG;
-using Microsoft.Agents.BotBuilder;
-using Microsoft.Agents.BotBuilder.App;
-using Microsoft.Agents.BotBuilder.State;
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -10,11 +10,11 @@ using System.Text;
 
 namespace Assistants.Hub.API
 {
-    public class SapBot : AgentApplication
+    public class SapAgent : AgentApplication
     {
         private readonly SAPChatService _sapChatService;
 
-        public SapBot(AgentApplicationOptions options, SAPChatService sapChatService) : base(options)
+        public SapAgent(AgentApplicationOptions options, SAPChatService sapChatService) : base(options)
         {
             _sapChatService = sapChatService ?? throw new ArgumentNullException(nameof(sapChatService));
 
@@ -30,7 +30,6 @@ namespace Assistants.Hub.API
             ChatMessageContent message = new(AuthorRole.User, turnContext.Activity.Text);
             chatHistory.Add(message);
 
-            // var forecastResponse = await _sapChatService.ExecuteAsync(chatHistory, cancellationToken);
             var responses = new List<string>();
             await foreach (var responseChunk in _sapChatService.ExecuteAsync(chatHistory, cancellationToken))
             {
@@ -46,19 +45,8 @@ namespace Assistants.Hub.API
                 return;
             }
 
-            // Create a response message based on the response content type from the WeatherForecastAgent
-            //copy the responses into the response text
             IActivity response = MessageFactory.Text(string.Join("\n", responses));
-            //IActivity response = forecastResponse.ContentType switch
-            //{
-            //    WeatherForecastAgentResponseContentType.AdaptiveCard => MessageFactory.Attachment(new Attachment()
-            //    {
-            //        ContentType = "application/vnd.microsoft.card.adaptive",
-            //        Content = forecastResponse.Content,
-            //    }),
-            //    _ => MessageFactory.Text(forecastResponse.Content),
-            //};
-
+            
             // Send the response message back to the user. 
             await turnContext.SendActivityAsync(response, cancellationToken);
         }

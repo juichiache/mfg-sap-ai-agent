@@ -1,7 +1,7 @@
 using Assistants.API;
 using Assistants.API.Core;
 using Assistants.Hub.API;
-using Microsoft.Agents.BotBuilder;
+using Microsoft.Agents.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAzureServices(builder.Configuration);
-builder.AddBot<IBot, SapBot>();
+builder.AddAgent<IAgent, SapAgent>();
 
 var app = builder.Build();
 
