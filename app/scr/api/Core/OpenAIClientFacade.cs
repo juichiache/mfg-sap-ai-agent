@@ -56,7 +56,8 @@ namespace Assistants.API.Core
 
             if (toolPackage == "SAP")
             {
-                kernel.ImportPluginFromObject(new SAPRetrivalPlugins(_httpClientFactory), "SAPChat");
+                var sapAPIKey = _config["SAPDataServiceKey"];
+                kernel.ImportPluginFromObject(new SAPRetrivalPlugins(_httpClientFactory, sapAPIKey), "SAPChat");
             }
             //kernel.ImportPluginFromObject(knowledgePlugin, DefaultSettings.DocumentRetrievalPluginName);
             //kernel.ImportPluginFromObject(serviceNowPlugin, "ServiceNow");

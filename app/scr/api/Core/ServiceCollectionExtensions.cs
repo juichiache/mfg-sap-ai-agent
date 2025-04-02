@@ -23,7 +23,10 @@ namespace Assistants.API.Core
             {
                 client.BaseAddress = new Uri("https://api.weather.gov/");
             });
-
+            services.AddHttpClient("SAPDATAAPI", client =>
+            {
+                client.BaseAddress = new Uri(configuration["SAPDataServiceEndpoint"]);
+            });
             var azureSearchServiceKey = configuration["AzureSearchServiceEndpoint"];
             if (!string.IsNullOrEmpty(azureSearchServiceKey))
             {
