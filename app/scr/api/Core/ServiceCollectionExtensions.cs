@@ -6,12 +6,19 @@ using System.Net.Http;
 using System.Text;
 using Microsoft.Agents.Authentication;
 using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Protocols.Connector;
-using Microsoft.Agents.Protocols.Primitives;
 using MinimalApi.Services.Search;
 using Assistants.Hub.API.Assistants.RAG;
 using Azure;
 using Assistants.Hub.API.Assistants;
+using Assistants.Hub.API.Core;
+using Assistants.Hub.API;
+using Microsoft.Agents.Storage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder;
 
 namespace Assistants.API.Core
 {
@@ -58,21 +65,15 @@ namespace Assistants.API.Core
         }
 
 
-        public static IHostApplicationBuilder AddBot<TBot, THandler>(this IHostApplicationBuilder builder) where TBot : IBot where THandler : class, TBot
+        public static IHostApplicationBuilder AddAgent<TAgent, THandler>(this IHostApplicationBuilder builder) where TAgent : IAgent where THandler : class, TAgent
         {
-            // builder.Services.AddBotAspNetAuthentication(builder.Configuration);
+            builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
-            // Add Connections object to access configured token connections.
-            builder.Services.AddSingleton<IConnections, ConfigurationConnections>();
+            builder.AddAgentApplicationOptions();
 
-            // Add factory for ConnectorClient and UserTokenClient creation
-            builder.Services.AddSingleton<IChannelServiceClientFactory, RestChannelServiceClientFactory>();
+            builder.AddAgent<THandler>();
 
-            // Add the BotAdapter, this is the default adapter that works with Azure Bot Service and Activity Protocol.
-            builder.Services.AddCloudAdapter();
-
-            // Add the Bot,  this is the primary worker for the bot. 
-            builder.Services.AddTransient<IBot, THandler>();
+            builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
             return builder;
         }
