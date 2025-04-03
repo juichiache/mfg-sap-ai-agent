@@ -1,6 +1,6 @@
 # mfg-sap-ai-agent
 
-This repo is an example of a Microsoft 365 Copilot agent that can be used to interact with SAP systems. It is built using the Microsoft AI Agent framework and is designed to be deployed in Microsoft Teams. The agent can be used to perform various tasks such as querying SAP data, creating SAP transactions, and more.
+This repo is an example of a Microsoft 365 Agent that can be used to interact with SAP systems. It is built using the Microsoft AI Agent framework and is designed to be deployed in M365 Copilot Chat & Microsoft Teams. The agent can be used to query SAP data, correlate with external data sources (such as Bing for getting recent tariff information & Azure Maps for weather information).
 
 ## Architecture
 
@@ -9,9 +9,9 @@ This repo is an example of a Microsoft 365 Copilot agent that can be used to int
 ## Prerequisites
 
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-- [Azure Dev Tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 - [Microsoft Teams](https://www.microsoft.com/en-us/microsoft-teams/download-app)
+- [Azure Dev Tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)
 
 ## Deployment instructions
 
