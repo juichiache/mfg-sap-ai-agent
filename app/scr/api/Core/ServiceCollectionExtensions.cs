@@ -34,7 +34,7 @@ namespace Assistants.API.Core
             {
                 client.BaseAddress = new Uri(configuration["SAPDataServiceEndpoint"]);
             });
-            var azureSearchServiceKey = configuration["AzureSearchServiceEndpoint"];
+            var azureSearchServiceKey = configuration["AzureSearchServiceKey"];
             if (!string.IsNullOrEmpty(azureSearchServiceKey))
             {
                 services.AddSingleton<SearchClientFactory>(sp =>

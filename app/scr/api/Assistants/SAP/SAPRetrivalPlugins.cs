@@ -15,13 +15,17 @@ namespace Assistants.Hub.API.Assistants.RAG;
 
 public class SAPRetrivalPlugins
 {
+    private readonly SearchClientFactory _searchClientFactory;
+    private readonly AzureOpenAIClient _azureOpenAIClient;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _apiKey;
 
-    public SAPRetrivalPlugins(IHttpClientFactory httpClientFactory, string apiKey)
+    public SAPRetrivalPlugins(SearchClientFactory searchClientFactory, AzureOpenAIClient azureOpenAIClient, IHttpClientFactory httpClientFactory, string apiKey)
     {
         _httpClientFactory = httpClientFactory;
         _apiKey = apiKey;
+        _searchClientFactory = searchClientFactory;
+        _azureOpenAIClient = azureOpenAIClient;
     }
 
 
@@ -32,7 +36,6 @@ public class SAPRetrivalPlugins
     {
         using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
         httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
-        //httpClient.DefaultRequestHeaders.Add("accept", "application/json");
 
         // Make the API call to get inventory data
         var response = await httpClient.GetAsync($"inbound-deliveries?dateFrom=2025-01-01&dateTo=2025-04-02");
@@ -73,6 +76,32 @@ public class SAPRetrivalPlugins
         var responseBody = await response.Content.ReadAsStringAsync();
  
         return responseBody;
+    }
+
+    [KernelFunction("get_policy_insights")]
+    [Description("Gets relevant tariff proposals goverment policy information based on the provided search term.")]
+    [return: Description("A list relevant elevant tariff proposals goverment policy information based on the provided search term.")]
+    public async Task<IEnumerable<KnowledgeSource>> GetKnowledgeSourcesAsync(Kernel kernel, [Description("Search query")] string searchQuery)
+    {
+        try
+        {
+            var settings = kernel.Data["VectorSearchSettings"] as VectorSearchSettings;
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings), "VectorSearchSettings cannot be null");
+
+            var logic = new SearchLogic<AISearchIndexerIndexDefinintion>(_azureOpenAIClient, _searchClientFactory, AISearchIndexerIndexDefinintion.SelectFieldNames, settings);
+            var results = await logic.SearchAsync(searchQuery);
+
+            // Add kernel context for diagnostics
+            kernel.AddFunctionCallResult("get_policy_insights", $"Search Query: {searchQuery} /n {System.Text.Json.JsonSerializer.Serialize(results)}", results);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            kernel.AddFunctionCallResult("get_policy_insights", $"Error: {ex.Message}", null);
+            throw;
+        }
     }
 
     //[Description("GetCommodityPricesAsync ")]

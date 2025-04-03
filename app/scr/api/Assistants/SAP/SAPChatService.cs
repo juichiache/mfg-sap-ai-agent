@@ -3,9 +3,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Assistants.API.Core;
 using Assistants.API.Services.Prompts;
+using Azure.AI.Projects;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using MinimalApi.Services.Search;
+using MinimalApi.Services.Search.IndexDefinitions;
 
 namespace Assistants.Hub.API.Assistants.RAG;
 
@@ -48,6 +51,7 @@ public class SAPChatService
         var kernel = _openAIClientFacade.BuildKernel("SAP");
         var chatGpt = kernel.Services.GetService<IChatCompletionService>();
         ArgumentNullException.ThrowIfNull(chatGpt, nameof(chatGpt));
+        kernel.Data["VectorSearchSettings"] = new VectorSearchSettings("steel-policies-vectors", 10, AISearchIndexerIndexDefinintion.EmbeddingsFieldName, "text-embedding", 12000, 5, false, false, "", "", false);  
 
         // Build Chat History
         var systemPrompt = PromptService.GetPromptByName("SAPAgentSystemPrompt");
