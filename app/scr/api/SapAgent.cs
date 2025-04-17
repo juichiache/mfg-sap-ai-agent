@@ -24,31 +24,29 @@ namespace Assistants.Hub.API
 
         protected async Task MessageActivityAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
         {
-            var chatHistory = turnState.GetValue("conversation.chatHistory", () => new ChatHistory());
-
-            // Invoke the SAPChatService to process the message
-            ChatMessageContent message = new(AuthorRole.User, turnContext.Activity.Text);
-            chatHistory.Add(message);
-
-            var responses = new List<string>();
-            await foreach (var responseChunk in _sapChatService.ExecuteAsync(chatHistory, cancellationToken))
+            try
             {
-                if (responseChunk != null)
+                await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Reticulating splines...", cancellationToken);
+
+                var chatHistory = turnState.GetValue("conversation.chatHistory", () => new ChatHistory());
+
+                // Invoke the SAPChatService to process the message
+                ChatMessageContent message = new(AuthorRole.User, turnContext.Activity.Text);
+                chatHistory.Add(message);
+
+                var responses = new List<string>();
+                await foreach (var responseChunk in _sapChatService.ExecuteAsync(chatHistory, cancellationToken))
                 {
-                    responses.Add(responseChunk.Text);
+                    if (responseChunk != null)
+                    {
+                        turnContext.StreamingResponse.QueueTextChunk(responseChunk.Text);
+                    }
                 }
             }
-
-            if (responses.Count == 0)
+            finally
             {
-                await turnContext.SendActivityAsync(MessageFactory.Text("Sorry, I couldn't query SAP at the moment."), cancellationToken);
-                return;
+                await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
             }
-
-            IActivity response = MessageFactory.Text(string.Join("\n", responses));
-            
-            // Send the response message back to the user. 
-            await turnContext.SendActivityAsync(response, cancellationToken);
         }
 
         protected async Task WelcomeMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
