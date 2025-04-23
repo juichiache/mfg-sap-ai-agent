@@ -407,3 +407,7 @@ api/Assistants.API-local.http
 app/infra/bicep/main-v2.bicepparam
 app/infra/bicep/main.bicepparam
 app/scr/api/appsettings.Development.json
+
+
+infra/terraform/.terraform
+infra/terraform/.terraform.lock.hcl
