@@ -62,6 +62,10 @@ output
 Terraform v1.11.4
 on linux_amd64
 ```
+vim
+```
+vim --version
+```
 output
 ```plaintext
 VIM - Vi IMproved 9.1 (2024 Jan 02, compiled Apr 01 2025 20:12:31)
