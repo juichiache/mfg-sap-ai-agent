@@ -65,7 +65,7 @@ namespace Assistants.API
 
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPRequest(ChatTurn[] request, [FromServices] SAPChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
+            await foreach (var chunk in aiService.ExecuteAsync(request, message => Console.Write(message)).WithCancellation(cancellationToken))
             {
                 yield return chunk;
             }

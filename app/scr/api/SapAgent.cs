@@ -1,4 +1,4 @@
-﻿using Assistants.API.Core;
+﻿using AdaptiveCards;
 using Assistants.Hub.API.Assistants.RAG;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
@@ -24,6 +24,7 @@ namespace Assistants.Hub.API
 
         protected async Task MessageActivityAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
         {
+            StringBuilder response = new();
             try
             {
                 await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Reticulating splines...", cancellationToken);
@@ -35,16 +36,33 @@ namespace Assistants.Hub.API
                 chatHistory.Add(message);
 
                 var responses = new List<string>();
-                await foreach (var responseChunk in _sapChatService.ExecuteAsync(chatHistory, cancellationToken))
+                
+                await foreach (var responseChunk in _sapChatService.ExecuteAsync(
+                    chatHistory, 
+                    intermediateMessage => turnContext.StreamingResponse.QueueInformativeUpdateAsync(intermediateMessage, cancellationToken), 
+                    cancellationToken))
                 {
                     if (responseChunk != null)
                     {
-                        turnContext.StreamingResponse.QueueTextChunk(responseChunk.Text);
+                        //don't stream the response back since we need to fully populate the adaptive card
+                        //intermediate status messages will be 
+                        response.Append(responseChunk.Text);
                     }
-                }
+                }                
             }
             finally
             {
+                AdaptiveCard adaptiveCard = new("1.6")
+                {
+                    Body = [new AdaptiveTextBlock(response.ToString()) { Wrap = true }]
+                };
+
+                turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
+                {
+                    ContentType = "application/vnd.microsoft.card.adaptive",
+                    Content = adaptiveCard.ToJson()
+                });
+
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
             }
         }
