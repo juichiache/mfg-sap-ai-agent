@@ -80,7 +80,7 @@ namespace Assistants.API
             return Results.Ok(agent.Id);
         }
 
-        private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPAzureAIAgentRequest(ChatTurn[] request, [FromServices] SAPAzureAIAgent aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
+        private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPAzureAIAgentRequest(ChatThreadRequest request, [FromServices] SAPAzureAIAgent aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
             {

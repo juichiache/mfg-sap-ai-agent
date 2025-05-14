@@ -7,6 +7,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.Agents.AzureAI;
 using Microsoft.SemanticKernel.ChatCompletion;
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -39,21 +40,37 @@ namespace Assistants.Hub.API.Assistants.SAP
             _agent = agent;
         }
 
-
-
-        public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatTurn[] chatMessages, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var sb = new StringBuilder();
-            var userMessage = chatMessages.LastOrDefault().User;
+            var userMessage = request.Message;
 
             var agentThread = new AzureAIAgentThread(_agent.Client);
-            var message = new ChatMessageContent(AuthorRole.User, userMessage);
+            if (!string.IsNullOrEmpty(request.ThreadId))
+                agentThread = new AzureAIAgentThread(_agent.Client, request.ThreadId);
 
+            var message = new ChatMessageContent(AuthorRole.User, userMessage);
             await foreach (StreamingChatMessageContent contentChunk in _agent.InvokeStreamingAsync(message, agentThread))
             {
-                sb.Append(contentChunk.Content);
-                yield return new ChatChunkResponse(contentChunk.Content);
-                await Task.Yield();
+                if (contentChunk.Items.OfType<StreamingFileReferenceContent>().Any())
+                {
+                    var file = contentChunk.Items.OfType<StreamingFileReferenceContent>().FirstOrDefault();
+                    var fileContent = await _agent.Client.GetFileContentAsync(file.FileId);
+                    byte[] bytes = fileContent.Value.ToArray();
+                    string base64 = Convert.ToBase64String(bytes);
+                    var dataUrl = $"data:{"image/png"};base64,{base64}";
+                
+                    sb.Append(dataUrl);
+                    yield return new ChatChunkResponse(dataUrl);
+                    await Task.Yield();
+                }
+
+                if (!string.IsNullOrEmpty(contentChunk.Content))
+                {
+                    sb.Append(contentChunk.Content);
+                    yield return new ChatChunkResponse(contentChunk.Content);
+                    await Task.Yield();
+                }
             }
 
             var thoughtProcess = _agent.Kernel.GetThoughtProcess(_agent.Instructions, sb.ToString()).ToList();
@@ -64,6 +81,12 @@ namespace Assistants.Hub.API.Assistants.SAP
         {
             var steps = _agent.Kernel.GetFunctionCallResults().ToList();
             return steps;
+        }
+
+        public bool ContainsStreamingFileReferenceContent(IEnumerable<object> contentItems)
+        {
+            // Check if any item in the collection is of type StreamingFileReferenceContent
+            return contentItems.OfType<StreamingFileReferenceContent>().Any();
         }
     }
 
