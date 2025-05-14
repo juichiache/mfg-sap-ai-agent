@@ -1,24 +1,25 @@
-﻿using Microsoft.SemanticKernel;
-using MinimalApi.Services;
-using MinimalApi.Services.Skills;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Text;
-using Microsoft.Agents.Authentication;
-using Microsoft.Agents.Hosting.AspNetCore;
-using MinimalApi.Services.Search;
-using Assistants.Hub.API.Assistants.RAG;
-using Azure;
+﻿using Assistants.Hub.API;
 using Assistants.Hub.API.Assistants;
+using Assistants.Hub.API.Assistants.RAG;
+using Assistants.Hub.API.Assistants.SAP;
 using Assistants.Hub.API.Core;
-using Assistants.Hub.API;
+using Azure;
+using Microsoft.Agents.Authentication;
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Agents.Builder.App;
-using Microsoft.Agents.Builder;
+using Microsoft.SemanticKernel;
+using MinimalApi.Services;
+using MinimalApi.Services.Search;
+using MinimalApi.Services.Skills;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Assistants.API.Core
 {
@@ -56,6 +57,8 @@ namespace Assistants.API.Core
                 return facade;
             });
 
+            services.AddSingleton<SAPAzureAIAgent>();
+            services.AddSingleton<SAPAgentBuilder>();
             services.AddSingleton<SAPChatService>();
             services.AddSingleton<AutoAdvisorAgent>();
             services.AddSingleton<RAGChatService>();

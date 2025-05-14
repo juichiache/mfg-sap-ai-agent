@@ -1,16 +1,17 @@
-﻿using System;
-using Assistants.API.Core;
-using Microsoft.AspNetCore.Mvc;
-using MinimalApi.Services;
-using System.Runtime.CompilerServices;
-using Microsoft.Agents.Hosting.AspNetCore;
-using Assistants.Hub.API.Assistants.RAG;
-using Assistants.Hub.API.Assistants;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.SemanticKernel.Services;
+﻿using Assistants.API.Core;
 using Assistants.Hub.API;
-using Microsoft.AspNetCore.Authorization;
+using Assistants.Hub.API.Assistants;
+using Assistants.Hub.API.Assistants.RAG;
+using Assistants.Hub.API.Assistants.SAP;
 using Microsoft.Agents.Builder;
+using Microsoft.Agents.Hosting.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.SemanticKernel.Services;
+using MinimalApi.Services;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace Assistants.API
 {
@@ -26,6 +27,8 @@ namespace Assistants.API
             api.MapPost("chat/agent", ProcessAgentRequestV2);
 
             api.MapPost("chat/sap", ProcessSAPRequest);
+            api.MapPost("chat/agent/sap/create", ProcessSAPAgentCreate);
+            api.MapPost("chat/agent/sap", ProcessSAPAzureAIAgentRequest);
 
             api.MapPost("messages", ProcessAgentRequest);
 
@@ -64,6 +67,20 @@ namespace Assistants.API
         }
 
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPRequest(ChatTurn[] request, [FromServices] SAPChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
+            {
+                yield return chunk;
+            }
+        }
+
+        private static async Task<IResult> ProcessSAPAgentCreate([FromServices] SAPAgentBuilder aiService)
+        {
+            var agent = await aiService.CreateAgentIfNotExistsAsync();
+            return Results.Ok(agent.Id);
+        }
+
+        private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPAzureAIAgentRequest(ChatTurn[] request, [FromServices] SAPAzureAIAgent aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
             {
