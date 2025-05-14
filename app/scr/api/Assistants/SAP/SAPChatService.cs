@@ -27,7 +27,7 @@ public class SAPChatService
         _configuration = configuration;
     }
 
-    public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatTurn[] chatMessages, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatTurn[] chatMessages, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var chatHistory = new ChatHistory();
         foreach (var turn in chatMessages)
@@ -37,19 +37,20 @@ public class SAPChatService
                 chatHistory.AddAssistantMessage(turn.Assistant);
         }
 
-        await foreach (var chunk in ExecuteAsync(chatHistory, cancellationToken))
+        await foreach (var chunk in ExecuteAsync(chatHistory, OnMessageReceived, cancellationToken))
         {
             yield return chunk;
         }
     }
 
-    public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatHistory chatHistory, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatHistory chatHistory, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var sw = Stopwatch.StartNew();
 
         // Kernel setup
         var kernel = _openAIClientFacade.BuildKernel("SAP");
         var chatGpt = kernel.Services.GetService<IChatCompletionService>();
+        
         ArgumentNullException.ThrowIfNull(chatGpt, nameof(chatGpt));
         kernel.Data["VectorSearchSettings"] = new VectorSearchSettings("steel-policies-vectors", 10, AISearchIndexerIndexDefinintion.EmbeddingsFieldName, "text-embedding", 12000, 5, false, false, "", "", false);  
 
@@ -66,6 +67,8 @@ public class SAPChatService
             {
                 sb.Append(responseChunk.Content);
                 yield return new ChatChunkResponse(responseChunk.Content);
+                //TODO: add intermediate message here
+                // OnMessageReceived();
                 await Task.Yield();
             }
         }
