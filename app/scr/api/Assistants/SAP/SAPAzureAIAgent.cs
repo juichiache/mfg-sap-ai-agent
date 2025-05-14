@@ -74,7 +74,7 @@ namespace Assistants.Hub.API.Assistants.SAP
             }
 
             var thoughtProcess = _agent.Kernel.GetThoughtProcess(_agent.Instructions, sb.ToString()).ToList();
-            yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess));
+            yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess, agentThread.Id));
         }
 
         public IEnumerable<ExecutionStepResult> GetExecutionSteps()
