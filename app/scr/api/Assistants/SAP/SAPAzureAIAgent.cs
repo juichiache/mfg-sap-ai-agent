@@ -91,7 +91,12 @@ namespace Assistants.Hub.API.Assistants.SAP
                 if (contentChunk.Items.OfType<StreamingFileReferenceContent>().Any())
                 {
                     var file = contentChunk.Items.OfType<StreamingFileReferenceContent>().FirstOrDefault();
-                    yield return new ChatChunkResponse(ChatChunkContentType.Image, file.FileId);
+                    var fileContent = await _agent.Client.GetFileContentAsync(file.FileId);
+                    byte[] bytes = fileContent.Value.ToArray();
+                    string base64 = Convert.ToBase64String(bytes);
+                    var dataUrl = $"data:{"image/png"};base64,{base64}";
+
+                    yield return new ChatChunkResponse(ChatChunkContentType.Image, dataUrl);
                     await Task.Yield();
                     continue;
                 }
