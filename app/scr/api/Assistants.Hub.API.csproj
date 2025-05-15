@@ -45,7 +45,7 @@
     <PackageReference Include="Azure.Search.Documents" Version="11.6.0" />
     <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="0.2.277-alpha" />
     <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="0.2.277-alpha" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.47.2" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.50.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.AzureAI" Version="1.47.0-preview" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.47.0" />
