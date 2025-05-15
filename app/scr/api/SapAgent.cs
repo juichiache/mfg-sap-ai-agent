@@ -39,29 +39,36 @@ namespace Assistants.Hub.API
                 
                 await foreach (var responseChunk in _sapChatService.ExecuteAsync(
                     chatHistory, 
-                    intermediateMessage => turnContext.StreamingResponse.QueueInformativeUpdateAsync(intermediateMessage, cancellationToken), 
+                    intermediateMessage => turnContext.StreamingResponse.QueueInformativeUpdateAsync(intermediateMessage, cancellationToken), //this will update the GUI with any intermidate messages
                     cancellationToken))
                 {
                     if (responseChunk != null)
                     {
                         //don't stream the response back since we need to fully populate the adaptive card
-                        //intermediate status messages will be 
+                        //intermediate status messages will be
+                        turnContext.StreamingResponse.QueueTextChunk(responseChunk.Text);
                         response.Append(responseChunk.Text);
                     }
                 }                
             }
             finally
             {
-                AdaptiveCard adaptiveCard = new("1.6")
-                {
-                    Body = [new AdaptiveTextBlock(response.ToString()) { Wrap = true }]
-                };
+                //AdaptiveCard adaptiveCard = new("1.5")
+                //{
+                //    Body =
+                //    [
+                //        new AdaptiveTextBlock(response.ToString())
+                //        {
+                //            Wrap = true
+                //        }
+                //    ]
+                //};
 
-                turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
-                {
-                    ContentType = "application/vnd.microsoft.card.adaptive",
-                    Content = adaptiveCard.ToJson()
-                });
+                //turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
+                //{
+                //    ContentType = "application/vnd.microsoft.card.adaptive",
+                //    Content = adaptiveCard.ToJson(),
+                //});
 
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
             }

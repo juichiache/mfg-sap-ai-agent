@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
+  "version": "1.0.1",
+  "manifestVersion": "devPreview",
+  "id": "02c06dee-0a1b-4120-a9da-e953a91fc7ab",
+  "name": {
+    "short": "bot-mfg-sap-ai-agent",
+    "full": ""
+  },
+  "developer": {
+    "name": "Contoso, Inc.",
+    "mpnId": "",
+    "websiteUrl": "https://microsoft.com",
+    "privacyUrl": "https://microsoft.com",
+    "termsOfUseUrl": "https://microsoft.com"
+  },
+  "description": {
+    "short": "bot-mfg-sap-ai-agent",
+    "full": "bot-mfg-sap-ai-agent"
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "203cd927-d5b8-41c9-9780-b69c2985b362",
+      "scopes": [
+        "personal",
+        "groupChat"
+      ],
+      "isNotificationOnly": false,
+      "supportsCalling": false,
+      "supportsVideo": false,
+      "supportsFiles": false
+    }
+  ],
+  "validDomains": [
+    "token.botframework.com"
+  ],
+  "webApplicationInfo": {
+    "id": "203cd927-d5b8-41c9-9780-b69c2985b362",
+    "resource": "api://df80ff1d-fe3a-4b5c-9463-eede86952266/203cd927-d5b8-41c9-9780-b69c2985b362"
+  },
+  "copilotAgents": {
+    "customEngineAgents": [
+      {
+        "type": "bot",
+        "id": "203cd927-d5b8-41c9-9780-b69c2985b362"
+      }
+    ]
+  }
+}
