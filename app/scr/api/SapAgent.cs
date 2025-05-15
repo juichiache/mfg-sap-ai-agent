@@ -45,7 +45,7 @@ namespace Assistants.Hub.API
                     {
                         //don't stream the response back since we need to fully populate the adaptive card
                         //intermediate status messages will be 
-                        response.Append(responseChunk.Text);
+                        response.Append(responseChunk.Content);
                     }
                 }                
             }

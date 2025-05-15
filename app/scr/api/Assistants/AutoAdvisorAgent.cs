@@ -55,7 +55,7 @@ namespace Assistants.Hub.API.Assistants
                 {
                     if (contentItem is MessageTextContent textItem)
                     {
-                        yield return new ChatChunkResponse(textItem.Text);
+                        yield return new ChatChunkResponse(ChatChunkContentType.Text, textItem.Text);
                     }
                 }
             }

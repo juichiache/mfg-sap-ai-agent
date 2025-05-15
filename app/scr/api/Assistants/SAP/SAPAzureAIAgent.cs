@@ -55,20 +55,14 @@ namespace Assistants.Hub.API.Assistants.SAP
                 if (contentChunk.Items.OfType<StreamingFileReferenceContent>().Any())
                 {
                     var file = contentChunk.Items.OfType<StreamingFileReferenceContent>().FirstOrDefault();
-                    var fileContent = await _agent.Client.GetFileContentAsync(file.FileId);
-                    byte[] bytes = fileContent.Value.ToArray();
-                    string base64 = Convert.ToBase64String(bytes);
-                    var dataUrl = $"data:{"image/png"};base64,{base64}";
-                    var markdownString = $"![Generated Image]({dataUrl})";
-                    sb.Append(markdownString);
-                    yield return new ChatChunkResponse(markdownString);
+                    yield return new ChatChunkResponse(ChatChunkContentType.Image, file.FileId);
                     await Task.Yield();
                 }
 
                 if (!string.IsNullOrEmpty(contentChunk.Content))
                 {
                     sb.Append(contentChunk.Content);
-                    yield return new ChatChunkResponse(contentChunk.Content);
+                    yield return new ChatChunkResponse(ChatChunkContentType.Text, contentChunk.Content);
                     await Task.Yield();
                 }
             }

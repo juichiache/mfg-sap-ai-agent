@@ -55,13 +55,13 @@ internal sealed class RAGChatService
             if (responseChunk.Content != null)
             {
                 sb.Append(responseChunk.Content);
-                yield return new ChatChunkResponse(responseChunk.Content);
+                yield return new ChatChunkResponse(ChatChunkContentType.Text, responseChunk.Content);
                 await Task.Yield();
             }
         }
         sw.Stop();
 
         var thoughtProcess = kernel.GetThoughtProcess(agent.SystemPrompt, sb.ToString()).ToList();
-        yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess));
+        yield return new ChatChunkResponse(ChatChunkContentType.Text, string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess));
     }
 }

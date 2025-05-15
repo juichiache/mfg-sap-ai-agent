@@ -66,7 +66,7 @@ public class SAPChatService
             if (responseChunk.Content != null)
             {
                 sb.Append(responseChunk.Content);
-                yield return new ChatChunkResponse(responseChunk.Content);
+                yield return new ChatChunkResponse(ChatChunkContentType.Text, responseChunk.Content);
                 //TODO: add intermediate message here
                 // OnMessageReceived();
                 await Task.Yield();
@@ -75,6 +75,6 @@ public class SAPChatService
         sw.Stop();
 
         var thoughtProcess = kernel.GetThoughtProcess(systemPrompt, sb.ToString()).ToList();
-        yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess));
+        yield return new ChatChunkResponse(ChatChunkContentType.Text, string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess));
     }
 }
