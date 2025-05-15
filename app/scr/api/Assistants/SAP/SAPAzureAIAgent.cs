@@ -74,15 +74,7 @@ namespace Assistants.Hub.API.Assistants.SAP
                     StreamingFunctionCallUpdateContent ? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
                     if (functionCall != null)
                     {
-                      
-                        if (OnMessageReceived != null)
-                        {
-                            OnMessageReceived(message.Content);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
-                        }
+                        Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
                     }
 
                     continue;
