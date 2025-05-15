@@ -63,7 +63,7 @@ namespace Assistants.Hub.API.Assistants.SAP
                 return Task.CompletedTask;
             }
 
-            
+            var files = new List<string>();
             var message = new ChatMessageContent(AuthorRole.User, userMessage);
             await foreach (StreamingChatMessageContent contentChunk in agent.InvokeStreamingAsync(message, agentThread, new AgentInvokeOptions() { OnIntermediateMessage = ProcessIntermediateMessage, Kernel = agent.Kernel }))
             {
@@ -76,8 +76,6 @@ namespace Assistants.Hub.API.Assistants.SAP
                     {
                         Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
                     }
-
-                    continue;
                 }
 
                 // Differentiate between assistant and tool messages
@@ -91,7 +89,11 @@ namespace Assistants.Hub.API.Assistants.SAP
                 if (contentChunk.Items.OfType<StreamingFileReferenceContent>().Any())
                 {
                     var file = contentChunk.Items.OfType<StreamingFileReferenceContent>().FirstOrDefault();
-                    var fileContent = await _agent.Client.GetFileContentAsync(file.FileId);
+                    if (files.Contains(file.FileId))
+                        continue;
+
+                    files.Add(file.FileId);
+                    var fileContent = await agent.Client.GetFileContentAsync(file.FileId);
                     byte[] bytes = fileContent.Value.ToArray();
                     string base64 = Convert.ToBase64String(bytes);
                     var dataUrl = $"data:{"image/png"};base64,{base64}";
