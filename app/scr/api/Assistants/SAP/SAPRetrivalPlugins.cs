@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel;
 using Assistants.API.Core;
 using Assistants.API.Services.Prompts;
-using Assistants.Hub.API.Assistants.SAP;
 using Azure.AI.OpenAI;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using MinimalApi.Services.Search;
 using MinimalApi.Services.Search.IndexDefinitions;
 using MinimalApi.Services.Skills;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Assistants.Hub.API.Assistants.RAG;
@@ -29,11 +27,12 @@ public class SAPRetrivalPlugins
     }
 
 
-    [KernelFunction("GetInboundDeliveries")]
+    [KernelFunction("get_inbound_deliveries")]
     [Description("Get a list of inbound deliveries")]
     [return: Description("A list of inbound deliveries")]
-    public async Task<string> GetInboundDeliveryAsync()
+    public async Task<string> GetInboundDeliveryAsync(Kernel kernel)
     {
+        kernel.AddIntermediateMessage("Retrieving inbound deliveries...");
         using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
         httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
 
@@ -45,11 +44,13 @@ public class SAPRetrivalPlugins
         return responseBody;
     }
 
-    [KernelFunction("GetInventory")]
+    [KernelFunction("get_inventory")]
     [Description("Get a list of current inventory")]
     [return: Description("A list of inventory items")]
-    public async Task<string> GetInventoryAsync()
+    public async Task<string> GetInventoryAsync(Kernel kernel)
     {
+        kernel.AddIntermediateMessage("Retrieving inventory...");
+
         using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
         httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
 
@@ -61,11 +62,13 @@ public class SAPRetrivalPlugins
         return responseBody;
     }
 
-    [KernelFunction("GetPurchaseOrders")]
+    [KernelFunction("get_purchase_orders")]
     [Description("Get a list of current purchase orders")]
     [return: Description("A list of purchase orders")]
-    public async Task<string> GetPurchaseOrdersAsync()
+    public async Task<string> GetPurchaseOrdersAsync(Kernel kernel)
     {
+        kernel.AddIntermediateMessage("Retrieving purchase orders...");
+
         using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
         httpClient.DefaultRequestHeaders.Add("x-functions-key", _apiKey);
 
@@ -74,7 +77,6 @@ public class SAPRetrivalPlugins
         response.EnsureSuccessStatusCode();
 
         var responseBody = await response.Content.ReadAsStringAsync();
- 
         return responseBody;
     }
 
@@ -85,6 +87,8 @@ public class SAPRetrivalPlugins
     {
         try
         {
+            kernel.AddIntermediateMessage("Retrieving policy insights...");
+
             var settings = kernel.Data["VectorSearchSettings"] as VectorSearchSettings;
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings), "VectorSearchSettings cannot be null");
@@ -104,47 +108,13 @@ public class SAPRetrivalPlugins
         }
     }
 
-    //[Description("GetCommodityPricesAsync ")]
-    //[return: Description("A list of inbound deliveries")]
-    //public async Task<List<DeliverySummary>> GetCommodityPricesAsync()
-    //{
-    //    using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
-    //    httpClient.DefaultRequestHeaders.Add("User-Agent", "app");
-
-    //    // Make the API call to get inventory data
-    //    var response = await httpClient.GetAsync("deliveries");
-    //    response.EnsureSuccessStatusCode();
-
-    //    var responseBody = await response.Content.ReadAsStringAsync();
-    //    var inventoryItems = JsonConvert.DeserializeObject<List<DeliverySummary>>(responseBody);
-
-    //    return inventoryItems;
-    //}
-
-    //[Description("GetTariffPolicyUpdatesAsync  ")]
-    //[return: Description("A list of inbound deliveries")]
-    //public async Task<List<DeliverySummary>> GetTariffPolicyUpdatesAsync()
-    //{
-    //    using var httpClient = _httpClientFactory.CreateClient("SAPDATAAPI");
-    //    httpClient.DefaultRequestHeaders.Add("User-Agent", "app");
-
-    //    // Make the API call to get inventory data
-    //    var response = await httpClient.GetAsync("deliveries");
-    //    response.EnsureSuccessStatusCode();
-
-    //    var responseBody = await response.Content.ReadAsStringAsync();
-    //    var inventoryItems = JsonConvert.DeserializeObject<List<DeliverySummary>>(responseBody);
-
-    //    return inventoryItems;
-    //}
-
-
-
-    [KernelFunction("GetWeatherForecast")]
+    [KernelFunction("get_weather_forecast")]
     [Description("Get weather forecast for a specified location point")]
     [return: Description("A weather forecast in JSON format")]
-    public async Task<string> RetrieveWeatherForecastAsync([Description("Location coordinates")] LocationPoint locationPoint, KernelArguments arguments)
+    public async Task<string> RetrieveWeatherForecastAsync(Kernel kernel, [Description("Location coordinates")] LocationPoint locationPoint, KernelArguments arguments)
     {
+        kernel.AddIntermediateMessage("Retrieving weather forecast...");
+
         using var httpClient = _httpClientFactory.CreateClient("WeatherAPI");
         httpClient.DefaultRequestHeaders.Add("User-Agent", "app");
 
@@ -170,7 +140,7 @@ public class SAPRetrivalPlugins
         return forecastResponseBody;
     }
 
-    [KernelFunction("GetLocationLatLong")]
+    [KernelFunction("get_location_lat_long")]
     [Description("Determine latitude and longitude from a location description")]
     [return: Description("Location coordinates with latitude and longitude")]
     public async Task<LocationPoint> DetermineLatLongAsync([Description("Location name or zip code")] string weatherLocation, KernelArguments arguments, Kernel kernel)
