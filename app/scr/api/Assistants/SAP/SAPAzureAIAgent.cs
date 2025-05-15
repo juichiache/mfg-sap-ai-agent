@@ -1,5 +1,4 @@
 ﻿using Assistants.API.Core;
-using Assistants.Hub.API.Core;
 using Azure.AI.Projects;
 using Azure.Identity;
 
@@ -7,7 +6,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.Agents.AzureAI;
 using Microsoft.SemanticKernel.ChatCompletion;
-using System;
+
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -16,7 +15,8 @@ namespace Assistants.Hub.API.Assistants.SAP
 #pragma warning disable SKEXP0110
     public class SAPAzureAIAgent
     {
-        private readonly AzureAIAgent _agent;
+        private readonly AgentsClient _agentsClient;
+        private readonly OpenAIClientFacade _openAIClientFacade;
         private readonly IConfiguration _configuration;
 
         public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration)
@@ -28,56 +28,50 @@ namespace Assistants.Hub.API.Assistants.SAP
             ArgumentNullException.ThrowIfNullOrEmpty(azureAIAgentID, "azureAIAgentID");
 
             AIProjectClient client = AzureAIAgent.CreateAzureAIClient(azureProjectConnectionString, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
-            AgentsClient agentsClient = client.GetAgentsClient();
-            var definition = agentsClient.GetAgent(azureAIAgentID);
-
-            var kernel = openAIClientFacade.BuildKernel("SAP");
-
-            var p = kernel.Plugins;
-            var agent = new AzureAIAgent(definition, agentsClient, p);
-            agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
-
-            _agent = agent;
+            _agentsClient = client.GetAgentsClient();
+            _openAIClientFacade = openAIClientFacade ?? throw new ArgumentNullException(nameof(openAIClientFacade));
         }
 
         public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            var definition = _agentsClient.GetAgent(_configuration["AzureAIAgentID"]);
+            var kernel = _openAIClientFacade.BuildKernel("SAP");
+            var agent = new AzureAIAgent(definition, _agentsClient, kernel.Plugins);
+            agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
+            agent.Kernel.Data.Add("IntermediateMessageHandler", OnMessageReceived);
+
+
             var sb = new StringBuilder();
             var userMessage = request.Message;
 
-            var agentThread = new AzureAIAgentThread(_agent.Client);
+            var agentThread = new AzureAIAgentThread(agent.Client);
             if (!string.IsNullOrEmpty(request.ThreadId))
-                agentThread = new AzureAIAgentThread(_agent.Client, request.ThreadId);
+                agentThread = new AzureAIAgentThread(agent.Client, request.ThreadId);
 
 
-            Task OnNewMessage(ChatMessageContent message)
+            Task ProcessIntermediateMessage(ChatMessageContent message)
             {
                 var fccList = message.Items.OfType<FunctionCallContent>().ToList();
                 if (OnMessageReceived != null)
                 {
                     foreach (var fcc in fccList)
                     {
-                        OnMessageReceived(fcc.FunctionName);
-                    }
-                }
-                else
-                {
-                    foreach (var fcc in fccList)
-                    {
-                        Console.WriteLine(fcc.FunctionName);
+                        //OnMessageReceived(fcc.FunctionName);
                     }
                 }
 
                 return Task.CompletedTask;
             }
 
+            
             var message = new ChatMessageContent(AuthorRole.User, userMessage);
-            await foreach (StreamingChatMessageContent contentChunk in _agent.InvokeStreamingAsync(message, agentThread, new AgentInvokeOptions() { OnIntermediateMessage = OnNewMessage }))
+            await foreach (StreamingChatMessageContent contentChunk in agent.InvokeStreamingAsync(message, agentThread, new AgentInvokeOptions() { OnIntermediateMessage = ProcessIntermediateMessage, Kernel = agent.Kernel }))
             {
 
                 if (string.IsNullOrEmpty(contentChunk.Content))
                 {
-                    StreamingFunctionCallUpdateContent? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
+                    var types = contentChunk.Items.Select(x => x.GetType()).ToList();
+                    StreamingFunctionCallUpdateContent ? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
                     if (functionCall != null)
                     {
                       
@@ -120,18 +114,6 @@ namespace Assistants.Hub.API.Assistants.SAP
 
             //var thoughtProcess = _agent.Kernel.GetThoughtProcess(_agent.Instructions, sb.ToString()).ToList();
             //yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess, agentThread.Id));
-        }
-
-        public IEnumerable<ExecutionStepResult> GetExecutionSteps()
-        {
-            var steps = _agent.Kernel.GetFunctionCallResults().ToList();
-            return steps;
-        }
-
-        public bool ContainsStreamingFileReferenceContent(IEnumerable<object> contentItems)
-        {
-            // Check if any item in the collection is of type StreamingFileReferenceContent
-            return contentItems.OfType<StreamingFileReferenceContent>().Any();
         }
     }
 

@@ -20,6 +20,15 @@ namespace Assistants.API.Core
             return chatHistory;
         }
 
+        public static void AddIntermediateMessage(this Kernel kernel, string message)
+        {
+            if (!kernel.Data.ContainsKey("IntermediateMessageHandler"))
+                return;
+
+            var intermediateMessageHandler = kernel.Data["IntermediateMessageHandler"] as Action<string>;
+            intermediateMessageHandler(message);
+        }
+
         public static void AddFunctionCallResult(this Kernel kernel, string name, string result, List<KnowledgeSource> sources = null)
         {
             var diagnosticsBuilder = GetRequestDiagnosticsBuilder(kernel);
