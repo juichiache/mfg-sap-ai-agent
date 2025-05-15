@@ -19,7 +19,8 @@ namespace Assistants.API.Core
     public enum ChatChunkContentType
     {
         Text,
-        Image
+        Image,
+        Code
     }
 
 

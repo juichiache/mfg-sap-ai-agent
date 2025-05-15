@@ -49,14 +49,58 @@ namespace Assistants.Hub.API.Assistants.SAP
             if (!string.IsNullOrEmpty(request.ThreadId))
                 agentThread = new AzureAIAgentThread(_agent.Client, request.ThreadId);
 
-            var message = new ChatMessageContent(AuthorRole.User, userMessage);
-            await foreach (StreamingChatMessageContent contentChunk in _agent.InvokeStreamingAsync(message, agentThread))
+
+            Task OnNewMessage(ChatMessageContent message)
             {
+                if(OnMessageReceived != null)
+                {
+                    OnMessageReceived(message.Content);
+                }
+                else
+                {
+                    Console.WriteLine(message.Content);
+                }
+
+                return Task.CompletedTask;
+            }
+
+            var message = new ChatMessageContent(AuthorRole.User, userMessage);
+            await foreach (StreamingChatMessageContent contentChunk in _agent.InvokeStreamingAsync(message, agentThread, new AgentInvokeOptions() { OnIntermediateMessage = OnNewMessage }))
+            {
+
+                if (string.IsNullOrEmpty(contentChunk.Content))
+                {
+                    StreamingFunctionCallUpdateContent? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
+                    if (functionCall != null)
+                    {
+                      
+                        if (OnMessageReceived != null)
+                        {
+                            OnMessageReceived(message.Content);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
+                        }
+                    }
+
+                    continue;
+                }
+
+                // Differentiate between assistant and tool messages
+                if (contentChunk.Metadata?.ContainsKey(AzureAIAgent.CodeInterpreterMetadataKey) ?? false)
+                {
+                    yield return new ChatChunkResponse(ChatChunkContentType.Code, contentChunk.Content);
+                    await Task.Yield();
+                    continue;
+                }
+
                 if (contentChunk.Items.OfType<StreamingFileReferenceContent>().Any())
                 {
                     var file = contentChunk.Items.OfType<StreamingFileReferenceContent>().FirstOrDefault();
                     yield return new ChatChunkResponse(ChatChunkContentType.Image, file.FileId);
                     await Task.Yield();
+                    continue;
                 }
 
                 if (!string.IsNullOrEmpty(contentChunk.Content))
