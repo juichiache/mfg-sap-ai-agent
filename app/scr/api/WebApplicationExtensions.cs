@@ -82,7 +82,7 @@ namespace Assistants.API
 
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPAzureAIAgentRequest(ChatThreadRequest request, [FromServices] SAPAzureAIAgent aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            await foreach (var chunk in aiService.ExecuteAsync(request).WithCancellation(cancellationToken))
+            await foreach (var chunk in aiService.ExecuteAsync(request, null).WithCancellation(cancellationToken))
             {
                 yield return chunk;
             }

@@ -1,5 +1,7 @@
 ﻿using AdaptiveCards;
+using Assistants.API.Core;
 using Assistants.Hub.API.Assistants.RAG;
+using Assistants.Hub.API.Assistants.SAP;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.Builder.State;
@@ -12,11 +14,11 @@ namespace Assistants.Hub.API
 {
     public class SapAgent : AgentApplication
     {
-        private readonly SAPChatService _sapChatService;
+        private readonly SAPAzureAIAgent _sapAzureAIAgent;
 
-        public SapAgent(AgentApplicationOptions options, SAPChatService sapChatService) : base(options)
+        public SapAgent(AgentApplicationOptions options, SAPAzureAIAgent sapAzureAIAgent) : base(options)
         {
-            _sapChatService = sapChatService ?? throw new ArgumentNullException(nameof(sapChatService));
+            _sapAzureAIAgent = sapAzureAIAgent ?? throw new ArgumentNullException(nameof(sapAzureAIAgent));
 
             OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeMessageAsync);
             OnActivity(ActivityTypes.Message, MessageActivityAsync, rank: RouteRank.Last);
@@ -32,13 +34,10 @@ namespace Assistants.Hub.API
                 var chatHistory = turnState.GetValue("conversation.chatHistory", () => new ChatHistory());
 
                 // Invoke the SAPChatService to process the message
-                ChatMessageContent message = new(AuthorRole.User, turnContext.Activity.Text);
-                chatHistory.Add(message);
+                var chatThreadRequest = new ChatThreadRequest(turnContext.Activity.Text);
 
-                var responses = new List<string>();
-                
-                await foreach (var responseChunk in _sapChatService.ExecuteAsync(
-                    chatHistory, 
+                var responses = new List<string>();               
+                await foreach (var responseChunk in _sapAzureAIAgent.ExecuteAsync(chatThreadRequest, 
                     intermediateMessage => turnContext.StreamingResponse.QueueInformativeUpdateAsync(intermediateMessage, cancellationToken), 
                     cancellationToken))
                 {

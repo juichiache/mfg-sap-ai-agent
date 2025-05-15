@@ -40,7 +40,7 @@ namespace Assistants.Hub.API.Assistants.SAP
             _agent = agent;
         }
 
-        public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var sb = new StringBuilder();
             var userMessage = request.Message;
@@ -59,9 +59,9 @@ namespace Assistants.Hub.API.Assistants.SAP
                     byte[] bytes = fileContent.Value.ToArray();
                     string base64 = Convert.ToBase64String(bytes);
                     var dataUrl = $"data:{"image/png"};base64,{base64}";
-                
-                    sb.Append(dataUrl);
-                    yield return new ChatChunkResponse(dataUrl);
+                    var markdownString = $"![Generated Image]({dataUrl})";
+                    sb.Append(markdownString);
+                    yield return new ChatChunkResponse(markdownString);
                     await Task.Yield();
                 }
 
