@@ -73,7 +73,7 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 
     1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
 
-    1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select `Upload custom app` and select your ZIP file.
+    1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select `Upload custom apps` and select your ZIP file.
 
     1.  Under `Users`, select `Entire organization`. Click `Next`.
 

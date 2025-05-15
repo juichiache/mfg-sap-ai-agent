@@ -26,7 +26,8 @@ namespace Assistants.Hub.API
 
         protected async Task MessageActivityAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
         {
-            StringBuilder response = new();
+            //StringBuilder response = new();
+            var responses = new List<ChatChunkResponse>();
             try
             {
                 await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Reticulating splines...", cancellationToken);
@@ -36,37 +37,49 @@ namespace Assistants.Hub.API
                 // Invoke the SAPChatService to process the message
                 var chatThreadRequest = new ChatThreadRequest(turnContext.Activity.Text);
 
-                var responses = new List<string>();
                 await foreach (var responseChunk in _sapAzureAIAgent.ExecuteAsync(chatThreadRequest,
                     intermediateMessage => turnContext.StreamingResponse.QueueInformativeUpdateAsync(intermediateMessage, cancellationToken),
                     cancellationToken))
                 {
                     if (responseChunk != null)
                     {
-                        //don't stream the response back since we need to fully populate the adaptive card
-                        //intermediate status messages will be 
-                        response.Append(responseChunk.Content);
+                        switch (responseChunk.ContentType)
+                        {
+                            case ChatChunkContentType.Text:
+                                turnContext.StreamingResponse.QueueTextChunk(responseChunk.Content);
+                                break;
+                        }
+                        responses.Add(responseChunk);
                     }
                 }
             }
             finally
             {
-                //AdaptiveCard adaptiveCard = new("1.5")
-                //{
-                //    Body =
-                //    [
-                //        new AdaptiveTextBlock(response.ToString())
-                //        {
-                //            Wrap = true
-                //        }
-                //    ]
-                //};
+                AdaptiveCard adaptiveCard = new("1.5");
 
-                //turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
-                //{
-                //    ContentType = "application/vnd.microsoft.card.adaptive",
-                //    Content = adaptiveCard.ToJson(),
-                //});
+                foreach (var response in responses)
+                {
+                    switch (response.ContentType)
+                    {
+                        case ChatChunkContentType.Image:
+                            adaptiveCard.Body.Add(
+                                new AdaptiveImage($"data&colon;image/jpeg;base64,{response.Content}")
+                            );
+                            break;
+                        case ChatChunkContentType.Code:
+                            //TODO: AdaptiveCodeBlock?
+                            break;
+                    }
+                }
+                
+                if (adaptiveCard.Body.Count > 0)
+                {
+                    turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
+                    {
+                        ContentType = "application/vnd.microsoft.card.adaptive",
+                        Content = adaptiveCard.ToJson(),
+                    });
+                }
 
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
             }

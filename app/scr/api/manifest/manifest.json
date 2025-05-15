@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "manifestVersion": "devPreview",
   "id": "02c06dee-0a1b-4120-a9da-e953a91fc7ab",
   "name": {
-    "short": "bot-mfg-sap-ai-agent",
-    "full": ""
+    "short": "Manufacturing SAP",
+    "full": "Microsoft Manufacturing SAP AI Agent"
   },
   "developer": {
     "name": "Contoso, Inc.",
@@ -15,8 +15,8 @@
     "termsOfUseUrl": "https://microsoft.com"
   },
   "description": {
-    "short": "bot-mfg-sap-ai-agent",
-    "full": "bot-mfg-sap-ai-agent"
+    "short": "Manufacturing SAP",
+    "full": "Microsoft Manufacturing SAP AI Agent"
   },
   "icons": {
     "outline": "outline.png",
@@ -28,12 +28,48 @@
       "botId": "203cd927-d5b8-41c9-9780-b69c2985b362",
       "scopes": [
         "personal",
-        "groupChat"
+        "groupChat",
+        "copilot"
       ],
       "isNotificationOnly": false,
       "supportsCalling": false,
       "supportsVideo": false,
-      "supportsFiles": false
+      "supportsFiles": false,
+      "commandLists": [
+        {
+          "scopes": [
+            "personal",
+            "groupChat",
+            "copilot"
+          ],
+          "commands": [
+            {
+              "title": "Get Total Slab",
+              "description": "What's the total slab at plant 1010?"
+            },
+            {
+              "title": "Get Total Slab by Product",
+              "description": "Will I be able to meet demand for a production run on 4/8/2025 needing 200 tons of hr coil?"
+            },
+            {
+              "title": "Inbound Deliveries at Risk",
+              "description": "Are the inbound deliveries at risk due to weather?"
+            },
+            {
+              "title": "Get Risk Report",
+              "description": "Prepare a risk report based on our supply chain data and on recent policies"
+            },
+            {
+              "title": "Get Supplier Performance",
+              "description": "What’s our total spend by material across all purchase orders, and can you show it as a bar chart?"
+            },
+            {
+              "title": "Compare Stock vs. Inbound Deliveries",
+              "description": "Compare current on-hand stock vs. upcoming receipts for MAT-SLAB at Plant 1010: show available stock alongside inbound delivery quantities, in a side-by-side bar chart."
+            }
+          ]
+        }
+      ]
     }
   ],
   "validDomains": [
