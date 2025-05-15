@@ -52,13 +52,20 @@ namespace Assistants.Hub.API.Assistants.SAP
 
             Task OnNewMessage(ChatMessageContent message)
             {
-                if(OnMessageReceived != null)
+                var fccList = message.Items.OfType<FunctionCallContent>().ToList();
+                if (OnMessageReceived != null)
                 {
-                    OnMessageReceived(message.Content);
+                    foreach (var fcc in fccList)
+                    {
+                        OnMessageReceived(fcc.FunctionName);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine(message.Content);
+                    foreach (var fcc in fccList)
+                    {
+                        Console.WriteLine(fcc.FunctionName);
+                    }
                 }
 
                 return Task.CompletedTask;

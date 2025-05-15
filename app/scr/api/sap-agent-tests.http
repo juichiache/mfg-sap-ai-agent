@@ -1,0 +1,11 @@
+@baseUrl = https://localhost:32777
+#@baseUrl = https://assistanthubservice.redsand-8dccfc71.eastus.azurecontainerapps.io
+
+### Agent
+
+POST {{baseUrl}}/api/chat/agent/sap
+Content-Type: application/json
+
+{
+  "message": "What’s our total spend by material across all purchase orders, and can you show it as a bar chart?"
+}
