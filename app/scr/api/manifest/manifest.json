@@ -1,10 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "manifestVersion": "devPreview",
   "id": "02c06dee-0a1b-4120-a9da-e953a91fc7ab",
   "name": {
-    "short": "Manufacturing SAP",
+    "short": "Manufacturing SAP Agent",
     "full": "Microsoft Manufacturing SAP AI Agent"
   },
   "developer": {
@@ -15,7 +15,7 @@
     "termsOfUseUrl": "https://microsoft.com"
   },
   "description": {
-    "short": "Manufacturing SAP",
+    "short": "Manufacturing SAP Agent",
     "full": "Microsoft Manufacturing SAP AI Agent"
   },
   "icons": {

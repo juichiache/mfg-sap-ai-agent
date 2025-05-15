@@ -18,25 +18,26 @@ namespace Assistants.Hub.API.Assistants.SAP
         private readonly AgentsClient _agentsClient;
         private readonly OpenAIClientFacade _openAIClientFacade;
         private readonly IConfiguration _configuration;
+        private readonly SAPAgentBuilder _sapAgentBuilder;
 
-        public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration)
+        public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration, SAPAgentBuilder sapAgentBuilder)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             var azureProjectConnectionString = _configuration["AIAgentServiceProjectConnectionString"];
-            var azureAIAgentID = _configuration["AzureAIAgentID"];
             ArgumentNullException.ThrowIfNullOrEmpty(azureProjectConnectionString, "AzureProjectConnectionString");
-            ArgumentNullException.ThrowIfNullOrEmpty(azureAIAgentID, "azureAIAgentID");
 
             AIProjectClient client = AzureAIAgent.CreateAzureAIClient(azureProjectConnectionString, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
             _agentsClient = client.GetAgentsClient();
             _openAIClientFacade = openAIClientFacade ?? throw new ArgumentNullException(nameof(openAIClientFacade));
+            _sapAgentBuilder = sapAgentBuilder ?? throw new ArgumentNullException(nameof(sapAgentBuilder));
         }
 
         public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var definition = _agentsClient.GetAgent(_configuration["AzureAIAgentID"]);
+            var definition = await _sapAgentBuilder.CreateAgentIfNotExistsAsync();
+            //_agentsClient.GetAgent(_configuration["AzureAIAgentID"]);
             var kernel = _openAIClientFacade.BuildKernel("SAP");
-            var agent = new AzureAIAgent(definition, _agentsClient, kernel.Plugins);
+            var agent = new AzureAIAgent(definition.Definition, _agentsClient, kernel.Plugins);
             agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
             agent.Kernel.Data.Add("IntermediateMessageHandler", OnMessageReceived);
 

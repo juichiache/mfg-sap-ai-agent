@@ -34,10 +34,13 @@ namespace Assistants.Hub.API.Assistants.SAP
                 tools.AddRange(pluginTools);
             }
 
+            var codeInterpreterToolResource = new CodeInterpreterToolResource();
+
             Azure.AI.Projects.Agent definition = await agentsClient.CreateAgentAsync(
-                "gpt-4o",
-                name: "rutzsco-sap-agent",
-                instructions: LoadEmbeddedResource("Assistants.Hub.API.Services.Prompts.SAPAgentSystemPrompt.txt"));
+                _configuration["AOAIStandardChatGptDeployment"],//"gpt-4o",
+                name: "mfg-sap-agent",
+                instructions: LoadEmbeddedResource("Assistants.Hub.API.Services.Prompts.SAPAgentSystemPrompt.txt"),
+                toolResources: new ToolResources() { CodeInterpreter = codeInterpreterToolResource });
 
             AzureAIAgent agent = new(definition, agentsClient, plugins: _kernel.Plugins);
 

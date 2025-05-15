@@ -53,25 +53,45 @@ namespace Assistants.Hub.API
                     }
                 }
             }
+            catch(Exception ex)
+            {
+                turnContext.StreamingResponse.QueueTextChunk(ex.Message);
+            }
             finally
             {
                 AdaptiveCard adaptiveCard = new("1.5");
 
+                var fileIds = new List<string>();
+
                 foreach (var response in responses)
                 {
-                    switch (response.ContentType)
+                    if(response.ContentType == ChatChunkContentType.Image)
                     {
-                        case ChatChunkContentType.Image:
-                            adaptiveCard.Body.Add(
-                                new AdaptiveImage($"data&colon;image/jpeg;base64,{response.Content}")
-                            );
-                            break;
-                        case ChatChunkContentType.Code:
-                            //TODO: AdaptiveCodeBlock?
-                            break;
+                        fileIds.Add(response.Content);
                     }
                 }
-                
+
+                var codeResponses = new List<StringBuilder>();
+                codeResponses.Add(new StringBuilder());
+
+                foreach (var response in responses)
+                {
+                    if (response.ContentType == ChatChunkContentType.Code)
+                    {
+                        codeResponses[0].Append(response.Content);
+                    }
+                }
+
+                foreach (var codeResponse in codeResponses)
+                {
+                    adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
+                }
+
+                foreach (var fileId in fileIds)
+                {
+                    adaptiveCard.Body.Add(new AdaptiveImage($"data&colon;image/jpeg;base64,{fileId}"));
+                }
+
                 if (adaptiveCard.Body.Count > 0)
                 {
                     turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
