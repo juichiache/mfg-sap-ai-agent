@@ -3,11 +3,16 @@ using Assistants.Hub.API;
 using Assistants.Hub.API.Assistants;
 using Assistants.Hub.API.Assistants.RAG;
 using Assistants.Hub.API.Assistants.SAP;
+using Azure.AI.Projects;
+using Azure.Identity;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.SemanticKernel.Agents;
+using Microsoft.SemanticKernel.Agents.AzureAI;
 using Microsoft.SemanticKernel.Services;
 using MinimalApi.Services;
 using System;
@@ -33,6 +38,8 @@ namespace Assistants.API
             api.MapPost("messages", ProcessAgentRequest);
 
             api.MapGet("status", ProcessStatusGet);
+
+            api.MapGet("image/{fileName}", ProcessImageGet);
             return app;
         }
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessWeatherRequest(ChatTurn[] request, [FromServices] WeatherChatService weatherChatService, [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -96,6 +103,25 @@ namespace Assistants.API
         private static async Task<IResult> ProcessStatusGet()
         {
             return Results.Ok("OK");
+        }
+        private static async Task<IResult> ProcessImageGet(string fileName, IConfiguration configuration)
+        {   
+            #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            AIProjectClient client = AzureAIAgent.CreateAzureAIClient(configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = configuration["VisualStudioTenantId"] }));
+            #pragma warning restore SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            var agentsClient = client.GetAgentsClient("v1");
+
+            var fileContent = await agentsClient.GetFileContentAsync(fileName.Split('.')[0]);
+
+
+            // Set correct content type
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(fileName, out var contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return Results.Stream(fileContent.Value.ToStream(), contentType);
         }
 
         private static async Task ProcessAgentRequest(HttpRequest request, HttpResponse response,[FromServices]IAgentHttpAdapter adapter, IAgent bot, CancellationToken cancellationToken)
