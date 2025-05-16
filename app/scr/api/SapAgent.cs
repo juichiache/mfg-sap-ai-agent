@@ -89,7 +89,7 @@ namespace Assistants.Hub.API
 
                 foreach (var fileId in fileIds)
                 {
-                    adaptiveCard.Body.Add(new AdaptiveImage($"data&colon;image/jpeg;base64,{fileId}"));
+                    adaptiveCard.Body.Add(new AdaptiveImage(url: fileId));
                 }
 
                 if (adaptiveCard.Body.Count > 0)
