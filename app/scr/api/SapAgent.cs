@@ -59,50 +59,50 @@ namespace Assistants.Hub.API
             }
             finally
             {
-                //AdaptiveCard adaptiveCard = new("1.5");
+                AdaptiveCard adaptiveCard = new("1.5");
 
-                //var fileIds = new List<string>();
+                var fileIds = new List<string>();
 
-                //foreach (var response in responses)
-                //{
-                //    if(response.ContentType == ChatChunkContentType.Image)
-                //    {
-                //        fileIds.Add(response.Content);
-                //    }
-                //}
+                foreach (var response in responses)
+                {
+                    if (response.ContentType == ChatChunkContentType.Image)
+                    {
+                        fileIds.Add(response.Content);
+                    }
+                }
 
-                //var codeResponses = new List<StringBuilder>();
+                var codeResponses = new List<StringBuilder>();
 
-                //foreach (var response in responses)
-                //{
-                //    if (response.ContentType == ChatChunkContentType.Code)
-                //    {
-                //        if (codeResponses.Count == 0)
-                //        {
-                //            codeResponses.Add(new StringBuilder());
-                //        }
-                //        codeResponses[0].Append(response.Content);
-                //    }
-                //}
+                foreach (var response in responses)
+                {
+                    if (response.ContentType == ChatChunkContentType.Code)
+                    {
+                        if (codeResponses.Count == 0)
+                        {
+                            codeResponses.Add(new StringBuilder());
+                        }
+                        codeResponses[0].Append(response.Content);
+                    }
+                }
 
-                //foreach (var codeResponse in codeResponses)
-                //{
-                //    adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
-                //}
+                foreach (var codeResponse in codeResponses)
+                {
+                    adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
+                }
 
                 foreach (var fileId in fileIds)
                 {
                     adaptiveCard.Body.Add(new AdaptiveImage(url: fileId));
                 }
 
-                //if (adaptiveCard.Body.Count > 0)
-                //{
-                //    turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
-                //    {
-                //        ContentType = "application/vnd.microsoft.card.adaptive",
-                //        Content = adaptiveCard.ToJson(),
-                //    });
-                //}
+                if (adaptiveCard.Body.Count > 0)
+                {
+                    turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
+                    {
+                        ContentType = "application/vnd.microsoft.card.adaptive",
+                        Content = adaptiveCard.ToJson(),
+                    });
+                }
 
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
             }
