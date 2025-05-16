@@ -65,75 +65,17 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 
 1.  Build M365 manifest
 
-    1.  Navigate to [https://dev.teams.microsoft.com/](https://dev.teams.microsoft.com)
+    1.  Update the `/app/src/api/manifest/manifest.json` file.
 
-    1.  On the `Apps` blade, select `New app`
+    1.  Create a ZIP file with the contents of the `/app/src/api/manifest` directory.
 
-    1.  Enter a name for the app
-
-    1.  **Change `Manifest version` to `Public developer preview (devPreview)`**
-
-    ### Configure -> Basic Information blade
-
-    1.  Copy the `App ID` to Notepad.
-
-    1.  Enter a `Description`, `Developer`, `Website`, `Privacy policy`, `Terms of use`
-
-    1.  Set the `Application (client) ID` to the `Entra ID Application (client) ID` created above.
-
-    1.  Click `Save`
-
-    ### Configure -> App features blade
-
-    1.  Select `Bot`
-
-    1.  Click `Create a new bot`
-
-    1.  Select `Enter a bot ID` and enter the `Entra ID Application (client) ID` from the Azure Bot service.
-
-    1.  Under `Select the scopes where people can use your bot`, select `Personal` and `Group Chat`.
-
-    1.  Click `Save`
-
-    ### Configure -> Single sign-on blade
-
-    1.  Enter the `Application ID URI` from your Entra ID app registration in the following format
-
-        ```
-        api://tenant-id/app-id
-        ```
-
-    1.  Click `Save`
-
-    ### Advanced -> Owners
-
-    1.  Add owners for the app and set the role to `Administrator`
-
-    ### Publish -> App validation blade
-
-    1.  Click `New validation` or `Get Started`
-
-    1.  Validate that the bot passes the tests.
-
-    ### Publish
-
-    1.  Click Publish
-
-    1.  Select `Publish to your org`
-
-    1.  Select `Publish to your org`.
-
-    ### Approve publish
+    ### Upload manifest
 
     1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
 
-    1.  Under the `Settings -> Integrated apps -> Requested apps` section, select the app you just published (with the status `Publish Pending`).
+        **IMPORTANT**: Make sure you are signed in with an ID that has **global admin** as you will be asked to consent for this application.
 
-    1.  Click `Publish` to approve the app and click `Confirm`.
-
-    ### Deploy app
-    
-    1.  Under `Available apps`, select the app you just published and click `Deploy app`. Click `Next.`
+    1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select `Upload custom apps` and select your ZIP file.
 
     1.  Under `Users`, select `Entire organization`. Click `Next`.
 
@@ -141,9 +83,26 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 
     1.  Click `Finish deployment`.
 
+    #### Updating existing apps
+
+    1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
+        
+        **IMPORTANT**: Make sure you are signed in with an ID that has **global admin** as you will be asked to consent for this application.
+
+    1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select the app you want to update.
+
+    1.  Click `Update` and select your new ZIP file. **NOTE**: You should update the `version` field in the `manifest.json` file before zipping & uploading.
+
+    1.  Click `Finish deployment`.
+
+
+    Updating the bot in M365 is similar.
+
+    
+
     ### Interact with bot
 
-    1.  Open [Microsoft Teams](https://teams.microsoft.com/v2/).
+    1.  Open [Microsoft Teams](https://teams.microsoft.com/v2/) or M365 Copilot Chat.
 
     1.  Select the `Apps` icon on the left side of the screen.
 
@@ -184,3 +143,43 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 1.  Click `Save`.
 
 1.  Open the `Test in Web Chat` blade to test.
+
+### Creating a persistent DevTunnel
+
+Creating a persistent DevTunnel means the URL will not change every time you need a DevTunnel. It will reuse an existing one, which means you don't have to update the URL on the Azure Bot service.
+
+1.  Create a persistent DevTunnel
+
+    ```shell
+    devtunnel create
+    ```
+
+    Copy the Tunnel ID (e.g. `new-cool-devtunnel.usw3`) to Notepad.
+
+1.  Configure the port for the new DevTunnel.
+
+    ```shell
+    devtunnel port create new-cool-devtunnel.usw3 -p 7041 --protocol https
+    ```
+
+1.  Set anonymous authentication for the new DevTunnel.
+
+    ```shell
+    devtunnel access create new-cool-devtunnel.usw3 -a
+    ```
+
+1.  Start the DevTunnel.
+
+    ```shell
+    devtunnel host new-cool-devtunnel.usw3
+    ```
+
+## Sample questions
+
+- What's the total slab at plant 1010?
+- will i be able to meet demand for a production run on 4/8/2025 needing 200 tons of hr coil?
+- are the inbound deliveries at risk due to weather?
+- prepare a risk report based on our supply chain data and on recent policies
+- What’s our total spend by material across all purchase orders, and can you show it as a bar chart?
+- Compare current on-hand stock vs. upcoming receipts for MAT-SLAB at Plant 1010: show available stock alongside inbound delivery quantities, in a side-by-side bar chart.
+- What’s the weekly trend in inbound quantity for MAT-HR-COIL at Plant 1010? Plot a time series of daily planned goods receipts.

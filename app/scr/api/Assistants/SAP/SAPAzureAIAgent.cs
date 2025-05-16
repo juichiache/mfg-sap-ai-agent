@@ -18,25 +18,25 @@ namespace Assistants.Hub.API.Assistants.SAP
         private readonly AgentsClient _agentsClient;
         private readonly OpenAIClientFacade _openAIClientFacade;
         private readonly IConfiguration _configuration;
+        private readonly SAPAgentBuilder _sapAgentBuilder;
 
-        public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration)
+        public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration, SAPAgentBuilder sapAgentBuilder)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             var azureProjectConnectionString = _configuration["AIAgentServiceProjectConnectionString"];
-            var azureAIAgentID = _configuration["AzureAIAgentID"];
             ArgumentNullException.ThrowIfNullOrEmpty(azureProjectConnectionString, "AzureProjectConnectionString");
-            ArgumentNullException.ThrowIfNullOrEmpty(azureAIAgentID, "azureAIAgentID");
 
             AIProjectClient client = AzureAIAgent.CreateAzureAIClient(azureProjectConnectionString, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
             _agentsClient = client.GetAgentsClient("v1");
             _openAIClientFacade = openAIClientFacade ?? throw new ArgumentNullException(nameof(openAIClientFacade));
+            _sapAgentBuilder = sapAgentBuilder ?? throw new ArgumentNullException(nameof(sapAgentBuilder));
         }
 
         public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var definition = _agentsClient.GetAgent(_configuration["AzureAIAgentID"]);
+            var definition = await _sapAgentBuilder.CreateAgentIfNotExistsAsync();
             var kernel = _openAIClientFacade.BuildKernel("SAP");
-            var agent = new AzureAIAgent(definition, _agentsClient, kernel.Plugins);
+            var agent = new AzureAIAgent(definition.Definition, _agentsClient, kernel.Plugins);
             agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
             agent.Kernel.Data.Add("IntermediateMessageHandler", OnMessageReceived);
 
@@ -71,7 +71,7 @@ namespace Assistants.Hub.API.Assistants.SAP
                 if (string.IsNullOrEmpty(contentChunk.Content))
                 {
                     var types = contentChunk.Items.Select(x => x.GetType()).ToList();
-                    StreamingFunctionCallUpdateContent ? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
+                    StreamingFunctionCallUpdateContent? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
                     if (functionCall != null)
                     {
                         Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
@@ -113,6 +113,9 @@ namespace Assistants.Hub.API.Assistants.SAP
 
             //var thoughtProcess = _agent.Kernel.GetThoughtProcess(_agent.Instructions, sb.ToString()).ToList();
             //yield return new ChatChunkResponse(string.Empty, new ChatChunkResponseResult(sb.ToString(), thoughtProcess, agentThread.Id));
+
+            //TODO: Delete agent
+
         }
     }
 

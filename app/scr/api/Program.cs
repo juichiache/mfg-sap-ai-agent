@@ -1,6 +1,6 @@
 using Assistants.API;
 using Assistants.API.Core;
-using Assistants.Hub.API;
+using Assistants.Hub.API.M365;
 using Microsoft.Agents.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
