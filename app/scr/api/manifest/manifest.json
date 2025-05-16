@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "manifestVersion": "devPreview",
   "id": "02c06dee-0a1b-4120-a9da-e953a91fc7ab",
   "name": {
-    "short": "Manufacturing SAP Agent",
-    "full": "Microsoft Manufacturing SAP AI Agent"
+    "short": "Manufacturing SAP Demo Agent",
+    "full": "Microsoft Manufacturing SAP AI Demo Agent"
   },
   "developer": {
     "name": "Contoso, Inc.",
@@ -15,8 +15,8 @@
     "termsOfUseUrl": "https://microsoft.com"
   },
   "description": {
-    "short": "Manufacturing SAP Agent",
-    "full": "Microsoft Manufacturing SAP AI Agent"
+    "short": "Manufacturing SAP Demo Agent",
+    "full": "Microsoft Manufacturing SAP AI Demo Agent"
   },
   "icons": {
     "outline": "outline.png",

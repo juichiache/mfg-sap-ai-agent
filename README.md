@@ -73,6 +73,8 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 
     1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
 
+        **IMPORTANT**: Make sure you are signed in with an ID that has **global admin** as you will be asked to consent for this application.
+
     1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select `Upload custom apps` and select your ZIP file.
 
     1.  Under `Users`, select `Entire organization`. Click `Next`.
@@ -80,6 +82,23 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
     1.  Under `Deployment`, select `Accept permissions`. Click `Next.`
 
     1.  Click `Finish deployment`.
+
+    #### Updating existing apps
+
+    1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
+        
+        **IMPORTANT**: Make sure you are signed in with an ID that has **global admin** as you will be asked to consent for this application.
+
+    1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select the app you want to update.
+
+    1.  Click `Update` and select your new ZIP file. **NOTE**: You should update the `version` field in the `manifest.json` file before zipping & uploading.
+
+    1.  Click `Finish deployment`.
+
+
+    Updating the bot in M365 is similar.
+
+    
 
     ### Interact with bot
 
