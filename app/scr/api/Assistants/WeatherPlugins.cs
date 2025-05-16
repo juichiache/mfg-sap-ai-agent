@@ -81,28 +81,28 @@ public class WeatherPlugins
         return lp;
     }
 
-    [KernelFunction("GetLocation")]
-    [Description("Extract location from conversation history")]
-    [return: Description("Identified location name or zip code")]
-    public async Task<string> DetermineLocationAsync(
-        [Description("Chat history for context")] ChatTurn[] chatMessages,
-        KernelArguments arguments,
-        Kernel kernel)
-    {
-        var chatGpt = kernel.Services.GetService<IChatCompletionService>();
-        var systemPrompt = PromptService.GetPromptByName("WeatherLocationSystemPrompt");
-        var chatHistory = new ChatHistory(systemPrompt).AddChatHistory(chatMessages);
+    //[KernelFunction("GetLocation")]
+    //[Description("Extract location from conversation history")]
+    //[return: Description("Identified location name or zip code")]
+    //public async Task<string> DetermineLocationAsync(
+    //    [Description("Chat history for context")] ChatTurn[] chatMessages,
+    //    KernelArguments arguments,
+    //    Kernel kernel)
+    //{
+    //    var chatGpt = kernel.Services.GetService<IChatCompletionService>();
+    //    var systemPrompt = PromptService.GetPromptByName("WeatherLocationSystemPrompt");
+    //    var chatHistory = new ChatHistory(systemPrompt).AddChatHistory(chatMessages);
 
-        var userMessage = await PromptService.RenderPromptAsync(
-            kernel, "{{$input}}", arguments);
-        chatHistory.AddUserMessage(userMessage);
+    //    var userMessage = await PromptService.RenderPromptAsync(
+    //        kernel, "{{$input}}", arguments);
+    //    chatHistory.AddUserMessage(userMessage);
 
-        var searchAnswer = await chatGpt.GetChatMessageContentAsync(
-            chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
+    //    var searchAnswer = await chatGpt.GetChatMessageContentAsync(
+    //        chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
 
-        arguments["WeatherLocation"] = searchAnswer.Content;
-        return searchAnswer.Content;
-    }
+    //    arguments["WeatherLocation"] = searchAnswer.Content;
+    //    return searchAnswer.Content;
+    //}
 }
 
 public class LocationPoint

@@ -140,32 +140,32 @@ public class SAPRetrivalPlugins
         return forecastResponseBody;
     }
 
-    [KernelFunction("get_location_lat_long")]
-    [Description("Determine latitude and longitude from a location description")]
-    [return: Description("Location coordinates with latitude and longitude")]
-    public async Task<LocationPoint> DetermineLatLongAsync([Description("Location name or zip code")] string weatherLocation, KernelArguments arguments, Kernel kernel)
-    {
-        var chatGpt = kernel.Services.GetService<IChatCompletionService>();
-        var chatHistory = new ChatHistory(PromptService.GetPromptByName("WeatherLatLongSystemPrompt"));
-        chatHistory.AddUserMessage(weatherLocation);
+    //[KernelFunction("get_location_lat_long")]
+    //[Description("Determine latitude and longitude from a location description")]
+    //[return: Description("Location coordinates with latitude and longitude")]
+    //public async Task<LocationPoint> DetermineLatLongAsync([Description("Location name or zip code")] string weatherLocation, KernelArguments arguments, Kernel kernel)
+    //{
+    //    var chatGpt = kernel.Services.GetService<IChatCompletionService>();
+    //    var chatHistory = new ChatHistory(PromptService.GetPromptByName("WeatherLatLongSystemPrompt"));
+    //    chatHistory.AddUserMessage(weatherLocation);
 
-        var searchAnswer = await chatGpt.GetChatMessageContentAsync(
-            chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
+    //    var searchAnswer = await chatGpt.GetChatMessageContentAsync(
+    //        chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
 
-        var parts = searchAnswer.Content.Split(',');
-        if (parts.Length != 2)
-        {
-            throw new ArgumentException(
-                "Invalid location format. Expected 'latitude, longitude'.");
-        }
+    //    var parts = searchAnswer.Content.Split(',');
+    //    if (parts.Length != 2)
+    //    {
+    //        throw new ArgumentException(
+    //            "Invalid location format. Expected 'latitude, longitude'.");
+    //    }
 
-        var lp = new LocationPoint
-        {
-            Latitude = parts[0].Trim(),
-            Longitude = parts[1].Trim()
-        };
+    //    var lp = new LocationPoint
+    //    {
+    //        Latitude = parts[0].Trim(),
+    //        Longitude = parts[1].Trim()
+    //    };
 
-        arguments["LocationPoint"] = lp;
-        return lp;
-    }
+    //    arguments["LocationPoint"] = lp;
+    //    return lp;
+    //}
 }
