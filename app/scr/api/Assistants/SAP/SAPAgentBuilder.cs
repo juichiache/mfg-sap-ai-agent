@@ -25,7 +25,7 @@ namespace Assistants.Hub.API.Assistants.SAP
         public async Task<AzureAIAgent> CreateAgentIfNotExistsAsync()
         {
             AIProjectClient client = AzureAIAgent.CreateAzureAIClient(_configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"]}));
-            AgentsClient agentsClient = client.GetAgentsClient();
+            AgentsClient agentsClient = client.GetAgentsClient("v1");
 
             var tools = new List<FunctionToolDefinition>();
             foreach (var plugin in _kernel.Plugins)

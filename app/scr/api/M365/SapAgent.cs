@@ -10,7 +10,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Text;
 
-namespace Assistants.Hub.API
+namespace Assistants.Hub.API.M365
 {
     public class SapAgent : AgentApplication
     {
@@ -60,34 +60,21 @@ namespace Assistants.Hub.API
             finally
             {
                 AdaptiveCard adaptiveCard = new("1.5");
+                List<string> fileIds;
+                List<StringBuilder> codeResponses;
+                ExtractFileIdsAndCodeResponses(responses, out fileIds, out codeResponses);
 
-                var fileIds = new List<string>();
-
-                foreach (var response in responses)
-                {
-                    if (response.ContentType == ChatChunkContentType.Image)
-                    {
-                        fileIds.Add(response.Content);
-                    }
-                }
-
-                var codeResponses = new List<StringBuilder>();
-
-                foreach (var response in responses)
-                {
-                    if (response.ContentType == ChatChunkContentType.Code)
-                    {
-                        if (codeResponses.Count == 0)
-                        {
-                            codeResponses.Add(new StringBuilder());
-                        }
-                        codeResponses[0].Append(response.Content);
-                    }
-                }
+                //read CodeBlock.json file for adaptive card template
+                var codeBlockTemplate = File.ReadAllText("M365/AdaptiveCards/CodeBlock.json");
+                var codeBlockJson = AdaptiveCard.FromJson(codeBlockTemplate);
+                var codeBlockCard = codeBlockJson.Card;
 
                 foreach (var codeResponse in codeResponses)
                 {
-                    adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
+                    var codeBlock = codeBlockCard.Body[0];
+                    codeBlock.AdditionalProperties["codeSnippet"] = codeResponse.ToString();
+                    //adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
+                    adaptiveCard.Body.Add(codeBlock);
                 }
 
                 foreach (var fileId in fileIds)
@@ -105,6 +92,31 @@ namespace Assistants.Hub.API
                 }
 
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
+            }
+        }
+
+        private static void ExtractFileIdsAndCodeResponses(List<ChatChunkResponse> responses, out List<string> fileIds, out List<StringBuilder> codeResponses)
+        {
+            fileIds = new List<string>();
+            foreach (var response in responses)
+            {
+                if (response.ContentType == ChatChunkContentType.Image)
+                {
+                    fileIds.Add(response.Content);
+                }
+            }
+
+            codeResponses = new List<StringBuilder>();
+            foreach (var response in responses)
+            {
+                if (response.ContentType == ChatChunkContentType.Code)
+                {
+                    if (codeResponses.Count == 0)
+                    {
+                        codeResponses.Add(new StringBuilder());
+                    }
+                    codeResponses[0].Append(response.Content);
+                }
             }
         }
 
