@@ -60,27 +60,10 @@ namespace Assistants.Hub.API.M365
             finally
             {
                 AdaptiveCard adaptiveCard = new("1.5");
-                List<string> fileIds;
-                List<StringBuilder> codeResponses;
-                ExtractFileIdsAndCodeResponses(responses, out fileIds, out codeResponses);
 
-                //read CodeBlock.json file for adaptive card template
-                var codeBlockTemplate = File.ReadAllText("M365/AdaptiveCards/CodeBlock.json");
-                var codeBlockJson = AdaptiveCard.FromJson(codeBlockTemplate);
-                var codeBlockCard = codeBlockJson.Card;
-
-                foreach (var codeResponse in codeResponses)
-                {
-                    var codeBlock = codeBlockCard.Body[0];
-                    codeBlock.AdditionalProperties["codeSnippet"] = codeResponse.ToString();
-                    //adaptiveCard.Body.Add(new AdaptiveTextBlock(codeResponse.ToString()));
-                    adaptiveCard.Body.Add(codeBlock);
-                }
-
-                foreach (var fileId in fileIds)
-                {
-                    adaptiveCard.Body.Add(new AdaptiveImage(url: fileId));
-                }
+                ExtractFileIdsAndCodeResponses(responses, out List<string> fileIds, out List<StringBuilder> codeResponses);
+                AddCodeBlocksToAdaptiveCard(adaptiveCard, codeResponses);
+                AddImagesToAdaptiveCard(adaptiveCard, fileIds);
 
                 if (adaptiveCard.Body.Count > 0)
                 {
@@ -92,6 +75,29 @@ namespace Assistants.Hub.API.M365
                 }
 
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken);
+            }
+        }
+
+        private static void AddImagesToAdaptiveCard(AdaptiveCard adaptiveCard, List<string> fileIds)
+        {
+            foreach (var fileId in fileIds)
+            {
+                adaptiveCard.Body.Add(new AdaptiveImage(url: fileId));
+            }
+        }
+
+        private static void AddCodeBlocksToAdaptiveCard(AdaptiveCard adaptiveCard, List<StringBuilder> codeResponses)
+        {
+            //read CodeBlock.json file for adaptive card template
+            var codeBlockTemplate = File.ReadAllText("M365/AdaptiveCards/CodeBlock.json");
+            var codeBlockJson = AdaptiveCard.FromJson(codeBlockTemplate);
+            var codeBlockCard = codeBlockJson.Card;
+
+            foreach (var codeResponse in codeResponses)
+            {
+                var codeBlock = codeBlockCard.Body[0];
+                codeBlock.AdditionalProperties["codeSnippet"] = codeResponse.ToString();
+                adaptiveCard.Body.Add(codeBlock);
             }
         }
 
