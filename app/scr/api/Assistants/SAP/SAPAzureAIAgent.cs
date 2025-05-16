@@ -28,7 +28,7 @@ namespace Assistants.Hub.API.Assistants.SAP
             ArgumentNullException.ThrowIfNullOrEmpty(azureAIAgentID, "azureAIAgentID");
 
             AIProjectClient client = AzureAIAgent.CreateAzureAIClient(azureProjectConnectionString, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
-            _agentsClient = client.GetAgentsClient();
+            _agentsClient = client.GetAgentsClient("v1");
             _openAIClientFacade = openAIClientFacade ?? throw new ArgumentNullException(nameof(openAIClientFacade));
         }
 
@@ -93,12 +93,12 @@ namespace Assistants.Hub.API.Assistants.SAP
                         continue;
 
                     files.Add(file.FileId);
-                    var fileContent = await agent.Client.GetFileContentAsync(file.FileId);
-                    byte[] bytes = fileContent.Value.ToArray();
-                    string base64 = Convert.ToBase64String(bytes);
-                    var dataUrl = $"data:{"image/png"};base64,{base64}";
+                    //var fileContent = await agent.Client.GetFileContentAsync(file.FileId);
+                    //byte[] bytes = fileContent.Value.ToArray();
+                    //string base64 = Convert.ToBase64String(bytes);
+                    //var dataUrl = $"data:{"image/png"};base64,{base64}";
 
-                    yield return new ChatChunkResponse(ChatChunkContentType.Image, dataUrl);
+                    yield return new ChatChunkResponse(ChatChunkContentType.Image, $"{_configuration["ImageServerBasePath"]}/{file.FileId}.png");
                     await Task.Yield();
                     continue;
                 }
