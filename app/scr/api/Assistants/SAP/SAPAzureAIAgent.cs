@@ -35,7 +35,6 @@ namespace Assistants.Hub.API.Assistants.SAP
         public async IAsyncEnumerable<ChatChunkResponse> ExecuteAsync(ChatThreadRequest request, Action<string> OnMessageReceived, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var definition = await _sapAgentBuilder.CreateAgentIfNotExistsAsync();
-            //_agentsClient.GetAgent(_configuration["AzureAIAgentID"]);
             var kernel = _openAIClientFacade.BuildKernel("SAP");
             var agent = new AzureAIAgent(definition.Definition, _agentsClient, kernel.Plugins);
             agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
@@ -72,7 +71,7 @@ namespace Assistants.Hub.API.Assistants.SAP
                 if (string.IsNullOrEmpty(contentChunk.Content))
                 {
                     var types = contentChunk.Items.Select(x => x.GetType()).ToList();
-                    StreamingFunctionCallUpdateContent ? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
+                    StreamingFunctionCallUpdateContent? functionCall = contentChunk.Items.OfType<StreamingFunctionCallUpdateContent>().SingleOrDefault();
                     if (functionCall != null)
                     {
                         Console.WriteLine($"# FUNCTION CALL - {functionCall.Name}");
