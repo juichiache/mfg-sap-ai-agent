@@ -140,32 +140,39 @@ public class SAPRetrivalPlugins
         return forecastResponseBody;
     }
 
-    //[KernelFunction("get_location_lat_long")]
-    //[Description("Determine latitude and longitude from a location description")]
-    //[return: Description("Location coordinates with latitude and longitude")]
-    //public async Task<LocationPoint> DetermineLatLongAsync([Description("Location name or zip code")] string weatherLocation, KernelArguments arguments, Kernel kernel)
-    //{
-    //    var chatGpt = kernel.Services.GetService<IChatCompletionService>();
-    //    var chatHistory = new ChatHistory(PromptService.GetPromptByName("WeatherLatLongSystemPrompt"));
-    //    chatHistory.AddUserMessage(weatherLocation);
+    [KernelFunction("get_location_lat_long")]
+    [Description("Determine latitude and longitude from a location description")]
+    [return: Description("Location coordinates with latitude and longitude")]
+    public async Task<LocationPoint> DetermineLatLongAsync([Description("Location name or zip code")] string weatherLocation, KernelArguments arguments, Kernel kernel)
+    {
+        
+        var chatCompletionsKernel = kernel;
+        if (kernel.Data.ContainsKey("ChatCompletionsKernel"))
+        {
+            chatCompletionsKernel = kernel.Data["ChatCompletionsKernel"] as Kernel;
+        }
 
-    //    var searchAnswer = await chatGpt.GetChatMessageContentAsync(
-    //        chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
+        var chatHistory = new ChatHistory(PromptService.GetPromptByName("WeatherLatLongSystemPrompt"));
+        chatHistory.AddUserMessage(weatherLocation);
 
-    //    var parts = searchAnswer.Content.Split(',');
-    //    if (parts.Length != 2)
-    //    {
-    //        throw new ArgumentException(
-    //            "Invalid location format. Expected 'latitude, longitude'.");
-    //    }
+        var chatGpt = chatCompletionsKernel.Services.GetService<IChatCompletionService>();
+        var searchAnswer = await chatGpt.GetChatMessageContentAsync(
+            chatHistory, DefaultSettings.AISearchRequestSettings, kernel);
 
-    //    var lp = new LocationPoint
-    //    {
-    //        Latitude = parts[0].Trim(),
-    //        Longitude = parts[1].Trim()
-    //    };
+        var parts = searchAnswer.Content.Split(',');
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException(
+                "Invalid location format. Expected 'latitude, longitude'.");
+        }
 
-    //    arguments["LocationPoint"] = lp;
-    //    return lp;
-    //}
+        var lp = new LocationPoint
+        {
+            Latitude = parts[0].Trim(),
+            Longitude = parts[1].Trim()
+        };
+
+        arguments["LocationPoint"] = lp;
+        return lp;
+    }
 }
