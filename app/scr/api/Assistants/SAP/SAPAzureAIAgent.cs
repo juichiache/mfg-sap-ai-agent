@@ -1,5 +1,5 @@
 ﻿using Assistants.API.Core;
-using Azure.AI.Projects;
+using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 
 using Microsoft.SemanticKernel;
@@ -15,7 +15,7 @@ namespace Assistants.Hub.API.Assistants.SAP
 #pragma warning disable SKEXP0110
     public class SAPAzureAIAgent
     {
-        private readonly AgentsClient _agentsClient;
+        private readonly PersistentAgentsClient _agentsClient;
         private readonly OpenAIClientFacade _openAIClientFacade;
         private readonly IConfiguration _configuration;
         private readonly SAPAgentBuilder _sapAgentBuilder;
@@ -23,11 +23,10 @@ namespace Assistants.Hub.API.Assistants.SAP
         public SAPAzureAIAgent(OpenAIClientFacade openAIClientFacade, IConfiguration configuration, SAPAgentBuilder sapAgentBuilder)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            var azureProjectConnectionString = _configuration["AIAgentServiceProjectConnectionString"];
-            ArgumentNullException.ThrowIfNullOrEmpty(azureProjectConnectionString, "AzureProjectConnectionString");
+            var aiAgentEndpoint = _configuration["AIAgentEndpoint"];
+            ArgumentNullException.ThrowIfNullOrEmpty(aiAgentEndpoint, "AIAgentEndpoint");
 
-            AIProjectClient client = AzureAIAgent.CreateAzureAIClient(azureProjectConnectionString, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
-            _agentsClient = client.GetAgentsClient("v1");
+            _agentsClient = AzureAIAgent.CreateAgentsClient(aiAgentEndpoint, new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
             _openAIClientFacade = openAIClientFacade ?? throw new ArgumentNullException(nameof(openAIClientFacade));
             _sapAgentBuilder = sapAgentBuilder ?? throw new ArgumentNullException(nameof(sapAgentBuilder));
         }

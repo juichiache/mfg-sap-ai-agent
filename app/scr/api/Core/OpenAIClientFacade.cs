@@ -1,10 +1,8 @@
 ﻿using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.SemanticKernel;
 using MinimalApi.Services.Search;
-using MinimalApi.Services.Skills;
 using Assistants.Hub.API.Assistants.RAG;
 
 namespace Assistants.API.Core

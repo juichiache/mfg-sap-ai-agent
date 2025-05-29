@@ -1,5 +1,5 @@
 ﻿using Assistants.API.Core;
-using Azure.AI.Projects;
+using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents.AzureAI;
@@ -24,8 +24,7 @@ namespace Assistants.Hub.API.Assistants.SAP
 
         public async Task<AzureAIAgent> CreateAgentIfNotExistsAsync()
         {
-            AIProjectClient client = AzureAIAgent.CreateAzureAIClient(_configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"]}));
-            AgentsClient agentsClient = client.GetAgentsClient("v1");
+            var agentsClient = AzureAIAgent.CreateAgentsClient(_configuration["AIAgentEndpoint"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"]}));
 
             var tools = new List<FunctionToolDefinition>();
             foreach (var plugin in _kernel.Plugins)
@@ -36,7 +35,7 @@ namespace Assistants.Hub.API.Assistants.SAP
 
             var codeInterpreterToolResource = new CodeInterpreterToolResource();
 
-            Azure.AI.Projects.Agent definition = await agentsClient.CreateAgentAsync(
+            var definition = await agentsClient.Administration.CreateAgentAsync(
                 _configuration["AOAIStandardChatGptDeployment"],//"gpt-4o",
                 name: "mfg-sap-agent",
                 instructions: LoadEmbeddedResource("Assistants.Hub.API.Services.Prompts.SAPAgentSystemPrompt.txt"),

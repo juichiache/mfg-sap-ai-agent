@@ -1,13 +1,13 @@
-﻿using System.ComponentModel;
-using Assistants.API.Core;
+﻿using Assistants.API.Core;
 using Assistants.API.Services.Prompts;
 using Azure.AI.OpenAI;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using MinimalApi.Services.Search;
 using MinimalApi.Services.Search.IndexDefinitions;
-using MinimalApi.Services.Skills;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel;
 
 namespace Assistants.Hub.API.Assistants.RAG;
 
@@ -175,4 +175,13 @@ public class SAPRetrivalPlugins
         arguments["LocationPoint"] = lp;
         return lp;
     }
+}
+
+public class LocationPoint
+{
+    [JsonProperty("latitude")]
+    public string Latitude { get; set; }
+
+    [JsonProperty("longitude")]
+    public string Longitude { get; set; }
 }

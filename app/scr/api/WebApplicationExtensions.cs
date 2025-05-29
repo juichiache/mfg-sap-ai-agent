@@ -1,21 +1,12 @@
 ﻿using Assistants.API.Core;
-using Assistants.Hub.API;
-using Assistants.Hub.API.Assistants;
 using Assistants.Hub.API.Assistants.RAG;
 using Assistants.Hub.API.Assistants.SAP;
-using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.Agents.AzureAI;
-using Microsoft.SemanticKernel.Services;
-using MinimalApi.Services;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Assistants.API
@@ -25,11 +16,8 @@ namespace Assistants.API
         internal static WebApplication MapApi(this WebApplication app)
         {
             var api = app.MapGroup("api");
-            api.MapPost("chat/weather", ProcessWeatherRequest);
-            api.MapPost("chat/autobodydamageanalysis", ProcessAutoDamageAnalysis);
             api.MapPost("chat/rag/{agentName}", ProcessRagRequest);
 
-            api.MapPost("chat/agent", ProcessAgentRequestV2);
 
             api.MapPost("chat/sap", ProcessSAPRequest);
             api.MapPost("chat/agent/sap/create", ProcessSAPAgentCreate);
@@ -42,21 +30,7 @@ namespace Assistants.API
             api.MapGet("image/{fileName}", ProcessImageGet);
             return app;
         }
-        private static async IAsyncEnumerable<ChatChunkResponse> ProcessWeatherRequest(ChatTurn[] request, [FromServices] WeatherChatService weatherChatService, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            await foreach (var chunk in weatherChatService.ReplyPlannerAsync(request).WithCancellation(cancellationToken))
-            {
-                yield return chunk;
-            }
-        }
 
-        private static async IAsyncEnumerable<ChatChunkResponse> ProcessAutoDamageAnalysis (ChatTurn[] request, [FromServices] AutoDamageAnalysisChatService autoDamageAnalysisChatService, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            await foreach (var chunk in autoDamageAnalysisChatService.ReplyPlannerAsync(request).WithCancellation(cancellationToken))
-            {
-                yield return chunk;
-            }
-        }
 
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessRagRequest(string agentName, ChatTurn[] request, [FromServices] RAGChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
@@ -65,13 +39,7 @@ namespace Assistants.API
                 yield return chunk;
             }
         }
-        private static async IAsyncEnumerable<ChatChunkResponse> ProcessAgentRequestV2(ChatTurn[] request, [FromServices] AutoAdvisorAgent agent, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            await foreach (var chunk in agent.Execute(request).WithCancellation(cancellationToken))
-            {
-                yield return chunk;
-            }
-        }
+
 
         private static async IAsyncEnumerable<ChatChunkResponse> ProcessSAPRequest(ChatTurn[] request, [FromServices] SAPChatService aiService, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
@@ -107,11 +75,10 @@ namespace Assistants.API
         private static async Task<IResult> ProcessImageGet(string fileName, IConfiguration configuration)
         {   
             #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            AIProjectClient client = AzureAIAgent.CreateAzureAIClient(configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = configuration["VisualStudioTenantId"] }));
+            var agentsClient = AzureAIAgent.CreateAgentsClient(configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = configuration["VisualStudioTenantId"] }));
             #pragma warning restore SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            var agentsClient = client.GetAgentsClient("v1");
 
-            var fileContent = await agentsClient.GetFileContentAsync(fileName.Split('.')[0]);
+            var fileContent = await agentsClient.Files.GetFileContentAsync(fileName.Split('.')[0]);
 
 
             // Set correct content type

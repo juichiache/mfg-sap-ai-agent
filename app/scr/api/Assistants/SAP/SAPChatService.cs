@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Assistants.API.Core;
 using Assistants.API.Services.Prompts;
-using Azure.AI.Projects;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
