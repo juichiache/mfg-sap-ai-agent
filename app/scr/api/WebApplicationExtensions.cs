@@ -75,7 +75,7 @@ namespace Assistants.API
         private static async Task<IResult> ProcessImageGet(string fileName, IConfiguration configuration)
         {   
             #pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            var agentsClient = AzureAIAgent.CreateAgentsClient(configuration["AIAgentServiceProjectConnectionString"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = configuration["VisualStudioTenantId"] }));
+            var agentsClient = AzureAIAgent.CreateAgentsClient(configuration["AIAgentEndpoint"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = configuration["VisualStudioTenantId"] }));
             #pragma warning restore SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             var fileContent = await agentsClient.Files.GetFileContentAsync(fileName.Split('.')[0]);
