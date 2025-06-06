@@ -33,10 +33,10 @@ jobs:
           --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
           --interactive false
 
-      - name: Deploy to hosting environment
-        run: |
-          npx atk deploy --ignore-env-file true \
-          --interactive false
+      # - name: Deploy to hosting environment
+      #   run: |
+      #     npx atk deploy --ignore-env-file true \
+      #     --interactive false
 
       - name: Package app
         run: |
@@ -47,3 +47,7 @@ jobs:
         with:
           name: artifact
           path: appPackage/build/appPackage.zip
+
+      - name: Publish appPackage
+        run: |
+          npx atk publish
