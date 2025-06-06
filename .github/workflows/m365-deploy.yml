@@ -59,10 +59,7 @@ jobs:
 
       - name: Login to M365 by service principal
         run: |
-          npx atk auth login m365 --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
-          --service-principal true \
-          --tenant ${{vars.AZURE_TENANT_ID}} \
-          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
+          npx atk auth login m365 \
           --interactive false
 
       - name: Publish appPackage
