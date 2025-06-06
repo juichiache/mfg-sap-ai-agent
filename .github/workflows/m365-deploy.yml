@@ -6,6 +6,7 @@ on:
     paths:
       - 'appPackage/**'
       - 'm365agents.yml'
+      - '.github/workflows/m365-deploy.yml'
     branches:
       - main
 jobs:
