@@ -3,6 +3,9 @@ name: Deploy Microsoft 365 Agent app
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'appPackage/**'
+      - 'm365agents.yml'
     branches:
       - main
 jobs:
