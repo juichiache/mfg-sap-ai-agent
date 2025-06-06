@@ -20,7 +20,7 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
     1.  Copy the `Tenant ID` and `Application (client) ID` to Notepad.
 
     ### Authentication blade
-    
+
     1.  Set `Web` Redirect URI to `https://token.botframework.com/.auth/web/redirect`
 
     1.  Set `Who can use this application or access this API` to `Accounts in any organizational directory (Any Microsoft Entra ID tenant - Multitenant)`
@@ -47,7 +47,7 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
     1.  Add the `Application ID URI`. Take the default.
 
     ### Owners
-    
+
     1.  Set the Owner.
 
 1.  Deploy Azure infrastructure
@@ -86,7 +86,7 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
     #### Updating existing apps
 
     1.  Navigate to [https://admin.microsoft.com/Adminportal](https://admin.microsoft.com/Adminportal)
-        
+
         **IMPORTANT**: Make sure you are signed in with an ID that has **global admin** as you will be asked to consent for this application.
 
     1.  Under the `Settings -> Integrated apps -> Deployed apps` section, select the app you want to update.
@@ -98,7 +98,7 @@ This repo is an example of a Microsoft 365 Agent that can be used to interact wi
 
     Updating the bot in M365 is similar.
 
-    
+
 
     ### Interact with bot
 
@@ -173,6 +173,18 @@ Creating a persistent DevTunnel means the URL will not change every time you nee
     ```shell
     devtunnel host new-cool-devtunnel.usw3
     ```
+
+## How to update the M365 app definition (such as changing the icon or sample questions)
+
+1.  Open the `app/src/api/manifest/manifest.json` file.
+
+1.  Update the `version` field to a new version number (e.g. `1.0.1`).
+
+1.  Update any other fields you want to change.
+
+1.  Commit & push the changes to your repository.
+
+1.  The GitHub Actions workflow will automatically build the new manifest and upload it to M365 Admin Center.
 
 ## Sample questions
 

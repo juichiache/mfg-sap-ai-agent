@@ -1,4 +1,7 @@
+name: Deploy Microsoft 365 Agent app
+
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
