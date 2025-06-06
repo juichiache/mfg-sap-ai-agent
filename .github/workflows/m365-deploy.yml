@@ -50,4 +50,5 @@ jobs:
 
       - name: Publish appPackage
         run: |
-          npx atk publish
+          npx atk publish \
+          --interactive false
