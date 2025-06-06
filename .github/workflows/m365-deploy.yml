@@ -34,13 +34,13 @@ jobs:
         run: |
           npm install @microsoft/m365agentstoolkit-cli@${{env.MICROSOFT_365_AGENTS_TOOLKIT_CLI_VERSION}}
 
-      - name: Login Azure by service principal
-        run: |
-          npx atk auth login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
-          --service-principal true \
-          --tenant ${{vars.AZURE_TENANT_ID}} \
-          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
-          --interactive false
+      # - name: Login Azure by service principal
+      #   run: |
+      #     npx atk auth login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
+      #     --service-principal true \
+      #     --tenant ${{vars.AZURE_TENANT_ID}} \
+      #     --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
+      #     --interactive false
 
       # - name: Deploy to hosting environment
       #   run: |
@@ -57,7 +57,15 @@ jobs:
           name: artifact
           path: appPackage/build/appPackage.zip
 
+      - name: Login to M365 by service principal
+        run: |
+          npx atk auth login m365 --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
+          --service-principal true \
+          --tenant ${{vars.AZURE_TENANT_ID}} \
+          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
+          --interactive false
+
       - name: Publish appPackage
         run: |
-          npx atk publish \
-          --interactive false
+          npx atk publish
+
