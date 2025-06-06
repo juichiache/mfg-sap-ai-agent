@@ -6,7 +6,8 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.Agents.AzureAI;
 using Microsoft.SemanticKernel.ChatCompletion;
-
+using MinimalApi.Services.Search;
+using MinimalApi.Services.Search.IndexDefinitions;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -38,7 +39,7 @@ namespace Assistants.Hub.API.Assistants.SAP
             var agent = new AzureAIAgent(definition.Definition, _agentsClient, kernel.Plugins);
             agent.Kernel.Data.Add("ChatCompletionsKernel", kernel);
             agent.Kernel.Data.Add("IntermediateMessageHandler", OnMessageReceived);
-
+            agent.Kernel.Data["VectorSearchSettings"] = new VectorSearchSettings("steel-policies-vectors", 10, AISearchIndexerIndexDefinintion.EmbeddingsFieldName, "text-embedding", 12000, 5, false, false, "", "", false);
 
             var sb = new StringBuilder();
             var userMessage = request.Message;

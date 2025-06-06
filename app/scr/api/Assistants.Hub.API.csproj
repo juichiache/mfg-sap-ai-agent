@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Services\Prompts\AutoBodyChatSystemPrompt.txt" />
     <None Remove="Services\Prompts\RAGChatSystemPrompt.txt" />
     <None Remove="Services\Prompts\WeatherChatSystemPrompt.txt" />
     <None Remove="Services\Prompts\WeatherChatUserPrompt.txt" />
@@ -31,10 +30,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Services\Prompts\SAPAgentSystemPrompt.txt" />
-    <EmbeddedResource Include="Services\Prompts\AutoServiceRAGChatSystemPrompt.txt" />
-    <EmbeddedResource Include="Services\Prompts\AutoBodyChatSystemPrompt.txt" />
-    <EmbeddedResource Include="Services\Prompts\ServiceNowUserPrompt.txt" />
-    <EmbeddedResource Include="Services\Prompts\ServiceNowSystemPrompt.txt" />
     <EmbeddedResource Include="Services\Prompts\WeatherChatUserPrompt.txt" />
     <EmbeddedResource Include="Services\Prompts\WeatherLatLongSystemPrompt.txt" />
     <EmbeddedResource Include="Services\Prompts\WeatherChatSystemPrompt.txt" />

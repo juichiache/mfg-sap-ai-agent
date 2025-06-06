@@ -81,8 +81,8 @@ public class SAPRetrivalPlugins
     }
 
     [KernelFunction("get_policy_insights")]
-    [Description("Gets relevant tariff proposals goverment policy information based on the provided search term.")]
-    [return: Description("A list relevant elevant tariff proposals goverment policy information based on the provided search term.")]
+    [Description("Gets relevant tariff proposals government policy information based on the provided search term.")]
+    [return: Description("A list relevant relevant tariff proposals government policy information based on the provided search term.")]
     public async Task<IEnumerable<KnowledgeSource>> GetKnowledgeSourcesAsync(Kernel kernel, [Description("Search query")] string searchQuery)
     {
         try

@@ -9,3 +9,23 @@ Content-Type: application/json
 {
   "message": "What is our total spend by material across all purchase orders, and can you show it as a bar chart?"
 }
+
+
+### Agent
+
+POST {{baseUrl}}/api/chat/agent/sap
+Content-Type: application/json
+
+{
+  "message": "Are the inbound deliveries at risk due to weather?"
+}
+
+
+### Agent
+
+POST {{baseUrl}}/api/chat/agent/sap
+Content-Type: application/json
+
+{
+  "message": "What are the current tarriffs?"
+}
