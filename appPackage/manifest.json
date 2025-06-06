@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "manifestVersion": "devPreview",
   "id": "02c06dee-0a1b-4120-a9da-e953a91fc7ab",
   "name": {
