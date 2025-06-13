@@ -318,11 +318,11 @@ variable "appserviceplan_sku_name" {
 variable "appserviceplan_tags" {
   description = "A map of tags to apply to the Azure App Service Plan"
   type        = map(string)
-  default     = {
+  default = {
     environment = "dev"
     project     = "sap-agent"
   }
-} 
+}
 ##############################################################################################################
 # Azure Functions Variables
 ##############################################################################################################
@@ -344,7 +344,7 @@ variable "function_app_kind" {
 variable "function_app_tags" {
   description = "A map of tags to apply to the Azure Function App"
   type        = map(string)
-  default     = {
+  default = {
     environment = "dev"
     project     = "sap-agent"
   }
@@ -363,4 +363,4 @@ variable "docker_image" {
   description = "The Docker image for the Azure Function App"
   type        = string
   default     = "mcr.microsoft.com/azuredocs/functions-helloworld:latest"
-} 
+}

@@ -74,12 +74,12 @@ ai_services_endpoint = "https://example.com/ai-services"
 # Container Apps Configuration
 #############################################################################################################
 
-containerappname               = "sap-agent-container-apps"
-container_name                 = "sap-agent-container"
-container_image                = "mcr.microsoft.com/azure-container-apps/sap-agent:latest"
-container_cpu                  = 0.5
-container_memory               = "1.0Gi"
-revision_mode                  = "Single"
+containerappname              = "sap-agent-container-apps"
+container_name                = "sap-agent-container"
+container_image               = "mcr.microsoft.com/azure-container-apps/sap-agent:latest"
+container_cpu                 = 0.5
+container_memory              = "1.0Gi"
+revision_mode                 = "Single"
 containerapp_environment_name = "sap-agent-containerapp-environment"
 
 

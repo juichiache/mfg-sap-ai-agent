@@ -24,7 +24,7 @@ resource "random_integer" "random_0_to_10" {
 }
 
 locals {
-  suffix = "${substr(md5(var.environment), random_integer.random_0_to_10.result, 4)}"
+  suffix = substr(md5(var.environment), random_integer.random_0_to_10.result, 4)
   # suffix = "-${substr(md5(var.environment), 5, 4)}"
 }
 
@@ -34,7 +34,7 @@ data "azurerm_client_config" "current" {
 }
 
 data "azurerm_resource_group" "sap_agent_rg" {
-  name = var.resource_group_name
+  name     = var.resource_group_name
   location = var.location
 }
 
@@ -59,13 +59,13 @@ module "storage_account" {
 
   storage_account_name        = var.storage_account_name
   suffix                      = local.suffix
-  storage_container_name               = var.storage_container_name
-  storage_account_tier = var.storage_account_access_tier
+  storage_container_name      = var.storage_container_name
+  storage_account_tier        = var.storage_account_access_tier
   storage_account_replication = var.storage_account_replication
 
-  location                    = var.location
-  resource_group_name         = var.resource_group_name
-  tags                        = var.tags
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tags                = var.tags
 }
 module "eventgrid_system_topic" {
   source = "./modules/azurerm/resource/eventgrid"
@@ -113,17 +113,17 @@ module "appserviceplans" {
 module "functions" {
   source = "./modules/azurerm/resource/functions"
 
-  location             = azurerm_resource_group.sap_agent_rg.location
-  resource_group_name  = azurerm_resource_group.sap_agent_rg.name
-  environment          = var.environment
-  suffix               = local.suffix
-  functionappname      = var.function_app_name
-  appserviceplan_kind  = var.function_app_os_type
-  function_app_sku_name = var.function_app_sku_name 
-  docker_image         = var.docker_image
-  appserviceplan_id    = module.appserviceplans.appserviceplan_id
-  storage_account_name = module.storage_account.storage_account_name
-  tags                 = var.tags
+  location              = azurerm_resource_group.sap_agent_rg.location
+  resource_group_name   = azurerm_resource_group.sap_agent_rg.name
+  environment           = var.environment
+  suffix                = local.suffix
+  functionappname       = var.function_app_name
+  appserviceplan_kind   = var.function_app_os_type
+  function_app_sku_name = var.function_app_sku_name
+  docker_image          = var.docker_image
+  appserviceplan_id     = module.appserviceplans.appserviceplan_id
+  storage_account_name  = module.storage_account.storage_account_name
+  tags                  = var.tags
 }
 
 ######################################################################################################################################################################
@@ -182,11 +182,11 @@ resource "azurerm_bot_service_azure_bot" "bot_service" {
 module "ai_foundry" {
   source = "./modules/azurerm/resource/aifoundry"
 
-  ai_foundry_key_vault_id = module.keyvault.key_vault_id
+  ai_foundry_key_vault_id         = module.keyvault.key_vault_id
   ai_foundry_storage_account_name = module.storage_account.storage_account_name
-  location            = azurerm_resource_group.sap_agent_rg.location
-  resource_group_name = azurerm_resource_group.sap_agent_rg.name
-  tags                = var.tags
+  location                        = azurerm_resource_group.sap_agent_rg.location
+  resource_group_name             = azurerm_resource_group.sap_agent_rg.name
+  tags                            = var.tags
 }
 
 #--- Azure OpenAI Configuration ---
@@ -196,9 +196,9 @@ module "openai" {
   openai_kind     = var.openai_kind
   openai_sku_name = var.openai_sku_name
 
-  location                = azurerm_resource_group.sap_agent_rg.location
-  resource_group_name     = azurerm_resource_group.sap_agent_rg.name
-  tags                    = var.tags
+  location            = azurerm_resource_group.sap_agent_rg.location
+  resource_group_name = azurerm_resource_group.sap_agent_rg.name
+  tags                = var.tags
 }
 
 #--- OpenAI Model Deployment ---
@@ -212,9 +212,9 @@ resource "azurerm_cognitive_deployment" "model_deployment" {
     name    = each.value.model.name
     version = each.value.model.version
   }
-  
+
   sku {
-    name    = each.value.sku.name
+    name = each.value.sku.name
   }
   lifecycle {
     # ignore_changes = [ tags]
@@ -223,13 +223,13 @@ resource "azurerm_cognitive_deployment" "model_deployment" {
 
 #--- Container App Configuration ---
 module "container_apps" {
-  source              = "./modules/azurerm/resource/containerapps"
-  container_app_name  = var.containerappname
-  location            = data.azurerm_resource_group.sap_agent_rg.location
-  resource_group_name = data.azurerm_resource_group.sap_agent_rg.name
+  source                     = "./modules/azurerm/resource/containerapps"
+  container_app_name         = var.containerappname
+  location                   = data.azurerm_resource_group.sap_agent_rg.location
+  resource_group_name        = data.azurerm_resource_group.sap_agent_rg.name
   log_analytics_workspace_id = module.log_analytics_workspace.log_analytics_workspace_id
-  container_image = var.container_image
-  tags                = var.tags
+  container_image            = var.container_image
+  tags                       = var.tags
 }
 
 #--- Azure AI Services Configuration ---
