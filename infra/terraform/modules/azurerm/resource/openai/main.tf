@@ -31,3 +31,8 @@ variable "environment" {
   default     = "sap-agent-environment"
   description = "The name of the environment for the OpenAI resource."
 }
+variable "suffix" {
+  type        = string
+  default     = ""
+  description = "Suffix to append to resource names for uniqueness, typically derived from the environment or a random value."
+}

@@ -14,6 +14,7 @@ resource "azurerm_ai_foundry" "aifoundry" {
   }
 }
 
+
 output "ai_foundry_id" {
   value = azurerm_ai_foundry.aifoundry.id
 }

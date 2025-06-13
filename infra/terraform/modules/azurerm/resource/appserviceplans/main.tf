@@ -38,4 +38,9 @@ variable "tags" {
   default     = {}
   description = "A map of tags to assign to the resources."
 }
+variable "environment" {
+  type        = string
+  default     = "dev"
+  description = "The environment for which the resources are being created (e.g., dev, prod)."
+}
 

@@ -25,6 +25,16 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+variable "tenant_id" {
+  description = "The Azure Active Directory tenant ID"
+  type        = string
+  default     = "16b3c013-d300-468d-ac64-7eda0820b6d3" # Replace with your tenant ID
+}
+variable "subscription_id" {
+  description = "The Azure subscription ID"
+  type        = string
+  default     = "b0c1d2e3-f4a5-6789-0abc-def123456789" # Replace with your subscription ID
+}
 
 #############################################################################################################
 # --- Monitoring and Application Insights Variables ---
@@ -124,6 +134,11 @@ variable "ai_services_endpoint" {
   type        = string
   default     = "https://example.com/api/messages"
 }
+variable "ai_services_kind" {
+  description = "The kind of the Azure AI Services resource"
+  type        = string
+  default     = "OpenAI"
+}
 
 #############################################################################################################
 # Container Apps Variables
@@ -159,7 +174,7 @@ variable "revision_mode" {
   type        = string
   default     = "Single"
 }
-variable "containerap_environment_name" {
+variable "containerapp_environment_name" {
   description = "The name of the Azure Container App Environment"
   type        = string
   default     = "sap-agent-containerapp-environment"
@@ -208,7 +223,16 @@ variable "storage_account_access_tier" {
   type        = string
   default     = "Hot"
 }
-
+variable "storage_account_replication" {
+  description = "The replication type for the Azure Blob Storage account"
+  type        = string
+  default     = "LRS"
+}
+variable "storage_blob_name" {
+  description = "The name of the blob within the Azure Blob Storage container"
+  type        = string
+  default     = "sap-agent-blob"
+}
 #############################################################################################################
 # Azure Event Grid Variables
 #############################################################################################################
@@ -222,6 +246,21 @@ variable "eventgrid_topic_type" {
   description = "The type of the Event Grid topic"
   type        = string
   default     = "Microsoft.Storage.StorageAccounts"
+}
+variable "eventgrid_system_topic_name" {
+  description = "The name of the Event Grid system topic"
+  type        = string
+  default     = "sap-agent-eventgrid-system-topic"
+}
+variable "eventgrid_event_subscription_name" {
+  description = "The name of the Event Grid event subscription"
+  type        = string
+  default     = "sap-agent-eventgrid-subscription"
+}
+variable "storage_queue_name" {
+  description = "The name of the storage queue for Event Grid events"
+  type        = string
+  default     = "sap-agent-queue"
 }
 
 #############################################################################################################
@@ -247,3 +286,81 @@ variable "keyvault_purge_protection_enabled" {
   type        = bool
   default     = true
 }
+
+##############################################################################################################
+# Azure App Service Plan Variables
+##############################################################################################################
+variable "appserviceplan_name" {
+  description = "The name of the Azure App Service Plan"
+  type        = string
+  default     = "sap-agent-appserviceplan"
+}
+variable "appserviceplan_kind" {
+  description = "The kind of the Azure App Service Plan (e.g., Linux, Windows)"
+  type        = string
+  default     = "Linux"
+}
+variable "appserviceplan_tier" {
+  description = "The tier of the Azure App Service Plan"
+  type        = string
+  default     = "PremiumV2"
+}
+variable "appserviceplan_size" {
+  description = "The size of the Azure App Service Plan"
+  type        = string
+  default     = "P2v2"
+}
+variable "appserviceplan_sku_name" {
+  description = "The SKU name for the Azure App Service Plan"
+  type        = string
+  default     = "P2v2"
+}
+variable "appserviceplan_tags" {
+  description = "A map of tags to apply to the Azure App Service Plan"
+  type        = map(string)
+  default     = {
+    environment = "dev"
+    project     = "sap-agent"
+  }
+} 
+##############################################################################################################
+# Azure Functions Variables
+##############################################################################################################
+variable "function_app_name" {
+  description = "The name of the Azure Function App"
+  type        = string
+  default     = "sap-agent-function-app"
+}
+variable "function_app_sku_name" {
+  description = "The SKU name for the Azure Function App"
+  type        = string
+  default     = "Y1"
+}
+variable "function_app_kind" {
+  description = "The kind of the Azure Function App (e.g., FlexConsumption)"
+  type        = string
+  default     = "FlexConsumption"
+}
+variable "function_app_tags" {
+  description = "A map of tags to apply to the Azure Function App"
+  type        = map(string)
+  default     = {
+    environment = "dev"
+    project     = "sap-agent"
+  }
+}
+variable "function_app_os_type" {
+  description = "The operating system type for the Azure Function App (e.g., linux, windows)"
+  type        = string
+  default     = "linux"
+}
+variable "function_app_runtime_version" {
+  description = "The runtime version for the Azure Function App"
+  type        = string
+  default     = "~4"
+}
+variable "docker_image" {
+  description = "The Docker image for the Azure Function App"
+  type        = string
+  default     = "mcr.microsoft.com/azuredocs/functions-helloworld:latest"
+} 

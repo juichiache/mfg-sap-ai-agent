@@ -52,3 +52,8 @@ variable "function_app_kind" {
   default     = "FlexConsumption"
   description = "The kind of Function App (e.g., FlexConsumption, Consumption)."
 }
+variable "function_app_sku_name" {
+  type        = string
+  default     = "Y1"
+  description = "The SKU name for the Function App."
+}

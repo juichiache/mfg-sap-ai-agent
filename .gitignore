@@ -410,3 +410,7 @@ test/
 infra/terraform/.terraform
 infra/terraform/.terraform.lock.hcl
 >>>>>>> bd2f30f (update with tf and gitignore)
+
+
+infra/terraform/.terraform
+infra/terraform/.terraform.lock.hcl

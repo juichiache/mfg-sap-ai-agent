@@ -13,6 +13,11 @@ variable "ai_services_kind" {
   default     = "AI"
   description = "The kind of the Azure AI Services resource."
 }
+variable "ai_services_sku_name" {
+  type        = string
+  default     = "Standard"
+  description = "The SKU name for the Azure AI Services resource."
+}
 variable "resource_group_name" {
   type        = string
   description = "The name of the resource group where the AI Services resource will be created."

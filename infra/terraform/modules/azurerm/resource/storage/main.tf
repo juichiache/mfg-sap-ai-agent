@@ -44,10 +44,6 @@ variable "storage_account_kind" {
   type        = string
   default     = "StorageV2"
 }
-variable "storage_blob_name" {
-  description = "The name of the blob"
-  type        = string
-}
 variable "public_network_access_enabled" {
   description = "Flag to enable public network access"
   type        = bool

@@ -14,13 +14,13 @@ resource "azurerm_key_vault" "keyvault" {
 }
 
 resource "azurerm_key_vault_access_policy" "keyvault_access_policy" {
-  count               = var.keyvault_access_policy_enabled ? 1 : 0
-  key_vault_id        = azurerm_key_vault.keyvault.id
-  tenant_id           = var.tenant_id
-  object_id           = var.keyvault_access_policy_object_id
+  count        = var.keyvault_access_policy_enabled ? 1 : 0
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = var.tenant_id
+  object_id    = var.keyvault_access_policy_object_id
 
-  key_permissions     = var.keyvault_key_permissions
-  secret_permissions  = var.keyvault_secret_permissions
+  key_permissions         = var.keyvault_key_permissions
+  secret_permissions      = var.keyvault_secret_permissions
   certificate_permissions = var.keyvault_certificate_permissions
 
   depends_on = [azurerm_key_vault.keyvault]

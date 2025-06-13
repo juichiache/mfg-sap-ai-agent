@@ -3,17 +3,16 @@ resource "azurerm_linux_function_app" "linux_functions" {
   name                 = "${var.environment}-${var.functionappname}-${var.suffix}"
   location             = var.location
   resource_group_name  = var.resource_group_name
-  app_service_plan_id  = var.appserviceplan_id
+  service_plan_id      = var.appserviceplan_id
   storage_account_name = var.storage_account_name
   #   storage_account_access_key = azurerm_storage_account.functions.primary_access_key
 
-  version    = "~4"
-  os_type    = "Linux"
+
   https_only = true
 
   site_config {
     application_stack {
-      docker_image = var.docker_image
+
     }
   }
 
@@ -32,17 +31,14 @@ resource "azurerm_windows_function_app" "windows_functions" {
   name                 = "${var.environment}-${var.functionappname}-${var.suffix}"
   location             = var.location
   resource_group_name  = var.resource_group_name
-  app_service_plan_id  = var.appserviceplan_id
+  service_plan_id      = var.appserviceplan_id
   storage_account_name = var.storage_account_name
   #   storage_account_access_key = azurerm_storage_account.functions.primary_access_key
 
-  version    = "~4"
-  os_type    = "Windows"
   https_only = true
 
   site_config {
     application_stack {
-      docker_image = var.docker_image
     }
   }
 

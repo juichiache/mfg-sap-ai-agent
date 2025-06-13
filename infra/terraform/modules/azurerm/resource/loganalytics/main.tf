@@ -1,14 +1,14 @@
-variable "loganalytics_workspace_name" {
+variable "log_analytics_workspace_name" {
   type        = string
   default     = "sap-agent-loganalytics"
   description = "The name of the Log Analytics Workspace."
 }
-variable "loganalytics_sku" {
+variable "log_analytics_sku" {
   type        = string
   default     = "PerGB2018"
   description = "The SKU for the Log Analytics Workspace."
 }
-variable "loganalytics_retention_in_days" {
+variable "log_analytics_retention_in_days" {
   type        = number
   default     = 30
   description = "The retention period in days for the Log Analytics Workspace."
@@ -42,4 +42,10 @@ variable "suffix" {
   type        = string
   default     = ""
   description = "Suffix to append to resource names for uniqueness, typically derived from the environment or a random value."
+}
+variable "environment" {
+  type        = string
+  default     = "dev"
+  description = "The environment for which the resources are being created (e.g., dev, prod)."
+
 }

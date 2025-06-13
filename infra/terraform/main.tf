@@ -59,10 +59,10 @@ module "storage_account" {
 
   storage_account_name        = var.storage_account_name
   suffix                      = local.suffix
-  container_name               = var.storage_container_name
-  storage_account_access_tier = var.storage_account_access_tier
+  storage_container_name               = var.storage_container_name
+  storage_account_tier = var.storage_account_access_tier
   storage_account_replication = var.storage_account_replication
-  storage_container_name      = var.storage_container_name
+
   location                    = var.location
   resource_group_name         = var.resource_group_name
   tags                        = var.tags
@@ -70,7 +70,7 @@ module "storage_account" {
 module "eventgrid_system_topic" {
   source = "./modules/azurerm/resource/eventgrid"
 
-  eventgrid_event_subscription_name = var.eventgrid_subscription_name
+  eventgrid_event_subscription_name = var.eventgrid_event_subscription_name
   eventgrid_system_topic_name       = var.eventgrid_name
   suffix                            = local.suffix
   location                          = var.location
@@ -84,8 +84,6 @@ module "eventgrid_system_topic" {
 resource "azurerm_storage_queue" "sap_agent_queue" {
   name                 = "${var.environment}-${var.storage_queue_name}-${local.suffix}"
   storage_account_name = module.storage_account.storage_account_name
-  resource_group_name  = var.resource_group_name
-
   metadata = {
     environment = var.environment
   }
@@ -121,7 +119,7 @@ module "functions" {
   suffix               = local.suffix
   functionappname      = var.function_app_name
   appserviceplan_kind  = var.function_app_os_type
-  functionapp_sku_name = var.function_app_sku_name
+  function_app_sku_name = var.function_app_sku_name 
   docker_image         = var.docker_image
   appserviceplan_id    = module.appserviceplans.appserviceplan_id
   storage_account_name = module.storage_account.storage_account_name
@@ -145,7 +143,7 @@ module "application_insights" {
 
 module "log_analytics_workspace" {
   source                          = "./modules/azurerm/resource/loganalytics"
-  log_analytics_workspace_name    = "${var.environment}-${var.sap_agent_log_analytics_workspace_name}-${local.suffix}"
+  log_analytics_workspace_name    = var.sap_agent_log_analytics_workspace_name
   suffix                          = local.suffix
   location                        = azurerm_resource_group.sap_agent_rg.location
   resource_group_name             = azurerm_resource_group.sap_agent_rg.name
@@ -184,6 +182,8 @@ resource "azurerm_bot_service_azure_bot" "bot_service" {
 module "ai_foundry" {
   source = "./modules/azurerm/resource/aifoundry"
 
+  ai_foundry_key_vault_id = module.keyvault.key_vault_id
+  ai_foundry_storage_account_name = module.storage_account.storage_account_name
   location            = azurerm_resource_group.sap_agent_rg.location
   resource_group_name = azurerm_resource_group.sap_agent_rg.name
   tags                = var.tags
@@ -199,7 +199,6 @@ module "openai" {
   location                = azurerm_resource_group.sap_agent_rg.location
   resource_group_name     = azurerm_resource_group.sap_agent_rg.name
   tags                    = var.tags
-  openai_model_deployment = var.openai_model_deployment
 }
 
 #--- OpenAI Model Deployment ---
@@ -209,13 +208,13 @@ resource "azurerm_cognitive_deployment" "model_deployment" {
   cognitive_account_id = module.openai.openai_id
 
   model {
-    format  = var.kind
+    format  = each.value.model.format
     name    = each.value.model.name
     version = each.value.model.version
   }
-  scale {
-    type    = each.value.scale.type
-    capcity = each.value.scale.capcity
+  
+  sku {
+    name    = each.value.sku.name
   }
   lifecycle {
     # ignore_changes = [ tags]
@@ -226,8 +225,10 @@ resource "azurerm_cognitive_deployment" "model_deployment" {
 module "container_apps" {
   source              = "./modules/azurerm/resource/containerapps"
   container_app_name  = var.containerappname
-  location            = azurerm_resource_group.sap_agent_rg.location
-  resource_group_name = azurerm_resource_group.sap_agent_rg.name
+  location            = data.azurerm_resource_group.sap_agent_rg.location
+  resource_group_name = data.azurerm_resource_group.sap_agent_rg.name
+  log_analytics_workspace_id = module.log_analytics_workspace.log_analytics_workspace_id
+  container_image = var.container_image
   tags                = var.tags
 }
 

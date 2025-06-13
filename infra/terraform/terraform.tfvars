@@ -5,8 +5,8 @@
 environment         = "dev"
 location            = "eastus"
 resource_group_name = "mfg-sap-ai-agents"
-tenant_id          = "16b3c013-d300-468d-ac64-7eda0820b6d3"  # Replace with your Azure tenant ID
-subscription_id      = "b0c1d2e3-f4a5-6789-0abc-def123456789"  # Replace with your Azure subscription ID
+tenant_id           = "16b3c013-d300-468d-ac64-7eda0820b6d3" # Replace with your Azure tenant ID
+subscription_id     = "b0c1d2e3-f4a5-6789-0abc-def123456789" # Replace with your Azure subscription ID
 tags = {
   environment = "dev"
   project     = "sap-agent"
@@ -32,24 +32,24 @@ openai_sku_name = "S0"
 openai_model_deployment = [{
   name = "gpt-4"
   model = {
+    format  = "OpenAI"
     name    = "gpt-4"
     version = "1106-Preview"
   }
-  scale = {
-    type     = "Standard"
-    capacity = 20
+  sku = {
+    name = "Standard"
   }
   rai_policy_name = "gpt-4-rai-policy"
   },
   {
     name = "gpt-35-turbo"
     model = {
+      format  = "OpenAI"
       name    = "gpt-35-turbo"
       version = "1106"
     }
-    scale = {
-      type     = "Standard"
-      capacity = 20
+    sku = {
+      name = "Standard"
     }
     rai_policy_name = "gpt-35-turbo-rai-policy"
 }]
@@ -80,7 +80,7 @@ container_image                = "mcr.microsoft.com/azure-container-apps/sap-age
 container_cpu                  = 0.5
 container_memory               = "1.0Gi"
 revision_mode                  = "Single"
-container_app_environment_name = "sap-agent-containerapp-environment"
+containerapp_environment_name = "sap-agent-containerapp-environment"
 
 
 #############################################################################################################
@@ -100,6 +100,7 @@ storage_account_sku         = "Standard_LRS"
 storage_container_name      = "sap-agent-container"
 storage_account_access_tier = "Hot"
 storage_account_replication = "LRS"
+storage_blob_name           = "sap-agent-blob"
 
 #############################################################################################################
 # Azure Event Grid Configuration
@@ -116,7 +117,7 @@ storage_queue_name                = "sap-agent-queue"
 #############################################################################################################
 
 keyvault_name                       = "sap-agent-key-vault"
-keyvault_sku                        = "standard"
+keyvault_sku_name                   = "standard"
 keyvault_soft_delete_retention_days = 7
 keyvault_purge_protection_enabled   = true
 
@@ -144,5 +145,5 @@ function_app_tags = {
   project     = "sap-agent"
 }
 function_app_os_type         = "linux"
-function_app_runtime_version = "python|3.11"
+function_app_runtime_version = "~4"
 docker_image                 = "mcr.microsoft.com/azure-functions/dotnet:4"

@@ -1,10 +1,10 @@
 resource "azurerm_log_analytics_workspace" "loganalytics" {
-  name                = "${var.environment}-${var.loganalytics_workspace_name}-${var.suffix}"
+  name                = "${var.environment}-${var.log_analytics_workspace_name}-${var.suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  sku                 = var.loganalytics_sku
+  sku                 = var.log_analytics_sku
 
-  retention_in_days = var.loganalytics_retention_in_days
+  retention_in_days = var.log_analytics_retention_in_days
 
   identity {
     type = "SystemAssigned"
@@ -15,7 +15,7 @@ resource "azurerm_log_analytics_workspace" "loganalytics" {
   })
 }
 
-output "loganalytics_workspace_id" {
+output "log_analytics_workspace_id" {
   value = azurerm_log_analytics_workspace.loganalytics.id
 }
 output "loganalytics_workspace_name" {

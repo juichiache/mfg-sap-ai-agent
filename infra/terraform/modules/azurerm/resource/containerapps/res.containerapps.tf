@@ -2,7 +2,6 @@ resource "azurerm_container_app_environment" "cap_environment" {
   name                       = "${var.environment}-${var.containerapp_environment_name}-${var.suffix}"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  logs_destination           = "log-analytics"
   log_analytics_workspace_id = var.log_analytics_workspace_id
 }
 
@@ -18,7 +17,7 @@ resource "azurerm_container_app" "container_app" {
 
   template {
     container {
-      name   = var.container_name
+      name   = var.container_app_name
       image  = var.container_image
       cpu    = var.container_cpu
       memory = var.container_memory

@@ -22,14 +22,15 @@ variable "log_analytics_workspace_id" {
   type        = string
   description = "The ID of the Log Analytics Workspace to use for logging."
 }
+variable "containerapp_environment_name" {
+  type        = string
+  default     = "sap-agent-containerapp-environment"
+  description = "The name of the Container App Environment."
+}
 variable "container_app_name" {
   type        = string
   default     = "sap-agent-containerapp"
   description = "The name of the Container App."
-}
-variable "containerapp_environment_id" {
-  type        = string
-  description = "The ID of the Container App Environment to use."
 }
 variable "container_image" {
   type        = string
