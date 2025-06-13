@@ -3,7 +3,6 @@ resource "azurerm_container_registry" "container_registry" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = var.container_registry_sku_name
-  admin_enabled       = var.container_registry_admin_enabled
 
   identity {
     type = "SystemAssigned"
