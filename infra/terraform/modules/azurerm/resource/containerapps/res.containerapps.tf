@@ -1,12 +1,13 @@
 resource "azurerm_container_app_environment" "cap_environment" {
-  name                       = "${var.containerapp_environment_name}-${var.suffix}"
+  name                       = "${var.environment}-${var.containerapp_environment_name}-${var.suffix}"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  log_analytics_workspace_id = var.workspace_id
+  logs_destination           = "log-analytics"
+  log_analytics_workspace_id = var.log_analytics_workspace_id
 }
 
 resource "azurerm_container_app" "container_app" {
-  name                         = "${var.containerappname}-${var.suffix}"
+  name                         = "${var.environment}-${var.container_app_name}-${var.suffix}"
   container_app_environment_id = azurerm_container_app_environment.cap_environment.id
   resource_group_name          = var.resource_group_name
   revision_mode                = var.revision_mode

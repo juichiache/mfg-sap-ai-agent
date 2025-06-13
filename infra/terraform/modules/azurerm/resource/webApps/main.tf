@@ -13,6 +13,11 @@ variable "app_settings" {
   type        = map(string)
   default     = {}
 }
+variable "suffix" {
+  description = "A suffix to append to the web app name for uniqueness, typically derived from the environment or a random value."
+  type        = string
+  default     = ""
+}
 
 variable "resource_group_name" {
   description = "The name of the resource group where the web app will be created."
@@ -51,11 +56,11 @@ variable "site_config" {
     use_32_bit_worker                 = bool
     vnet_route_all_enabled            = bool
     app_command_line                  = string
-    cors                              = object({
+    cors = object({
       allowed_origins     = list(string)
       support_credentials = bool
     })
-    application_stack                 = object({
+    application_stack = object({
       python_version = string
     })
   })
@@ -63,8 +68,8 @@ variable "site_config" {
 
 variable "identity" {
   description = "The identity configuration for the web app."
-  type = string
-  default = "SystemAssigned"
+  type        = string
+  default     = "SystemAssigned"
 }
 
 variable "lifecycle" {

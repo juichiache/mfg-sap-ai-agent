@@ -1,11 +1,11 @@
 resource "azurerm_cognitive_account" "openai" {
-  name                = "${var.openai_name}-${var.suffix}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  kind                = "OpenAI"
-  sku_name            = var.openai_sku_name
+  name                          = "${var.environment}-${var.openai_name}-${var.suffix}"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  kind                          = var.openai_kind
+  sku_name                      = var.openai_sku_name
   public_network_access_enabled = true
-  custom_sub_domain_name = "${var.environment}-${var.openai_name}-${var.suffix}"
+  custom_sub_domain_name        = "${var.environment}-${var.openai_name}-${var.suffix}"
 
   identity {
     type = "SystemAssigned"

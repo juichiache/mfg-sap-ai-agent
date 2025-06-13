@@ -1,15 +1,12 @@
-variable "ai_foundry_name" {
+variable "container_registry_name" {
   type        = string
-  default     = "sap-agent-aifoundry"
-  description = "The name of the AI Foundry resource."
+  default     = "sap-agent-container-registry"
+  description = "The name of the Azure Container Registry resource."
 }
-variable "ai_foundry_storage_account_name" {
+variable "container_registry_sku_name" {
   type        = string
-  description = "The name of the storage account to be used by AI Foundry."
-}
-variable "ai_foundry_key_vault_id" {
-  type        = string
-  description = "The ID of the Key Vault to be used by AI Foundry."
+  default     = "Standard"
+  description = "The SKU for the Azure Container Registry resource."
 }
 variable "location" {
   type        = string
@@ -34,5 +31,5 @@ variable "suffix" {
 variable "environment" {
   type        = string
   default     = "sap-agent-environment"
-  description = "The name of the environment for the AI Foundry resource."
+  description = "The name of the environment for the Azure Container Registry resource."
 }

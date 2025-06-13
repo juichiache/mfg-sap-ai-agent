@@ -1,4 +1,4 @@
-resource azurerm_private_endpoint "private_endpoint" {
+resource "azurerm_private_endpoint" "private_endpoint" {
   count               = var.deploy_private_endpoint ? 1 : 0
   name                = var.private_endpoint_name
   location            = var.location

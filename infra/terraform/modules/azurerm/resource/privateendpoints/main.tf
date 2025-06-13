@@ -25,7 +25,7 @@ variable "private_connection_resource_id" {
 variable "subresource_names" {
   description = "The subresource names for the private connection"
   type        = list(string)
-  
+
 }
 variable "tags" {
   description = "Tags to be applied to the resources"

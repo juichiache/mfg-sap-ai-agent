@@ -1,5 +1,5 @@
 resource "azurerm_application_insights" "appinsights" {
-  name                = "${var.sap-agent-appinsights}-${var.suffix}"
+  name                = "${var.environment}-${var.sap-agent-appinsights}-${var.suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
   application_type    = "web"

@@ -9,19 +9,19 @@ resource "azurerm_public_ip" "pip" {
   }
 }
 
-module "devbox_nic"{
-  source = "../azurerm/resource/networkinterfaces"
-  environment = var.environment
-  location = var.location
+module "devbox_nic" {
+  source                 = "../azurerm/resource/networkinterfaces"
+  environment            = var.environment
+  location               = var.location
   network_interface_name = var.nic_name
-  ip_configuration_name = var.ip_configuration_name
-  resource_group_name = var.resource_group_name
-  subnet_name = var.subnet_name
-  vnet_name = var.vnet_name
-  has_public_ip = var.vm_has_public_ip
-  public_ip_address_id = azurerm_public_ip.pip.id
-  subnet_id = var.subnet_id
-  
+  ip_configuration_name  = var.ip_configuration_name
+  resource_group_name    = var.resource_group_name
+  subnet_name            = var.subnet_name
+  vnet_name              = var.vnet_name
+  has_public_ip          = var.vm_has_public_ip
+  public_ip_address_id   = azurerm_public_ip.pip.id
+  subnet_id              = var.subnet_id
+
   tags = {
     environment = "dev"
   }
@@ -56,12 +56,12 @@ resource "azurerm_network_security_rule" "allow_rdp" {
 }
 
 resource "azurerm_linux_virtual_machine" "devbox-vm" {
-  name                  = "${var.vm_name}"
-  resource_group_name   = var.resource_group_name
-  location              = var.location
-  size                  = var.vm_size
-  admin_password        = var.vm_admin_password
-  admin_username        = var.vm_admin_username
+  name                = var.vm_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = var.vm_size
+  admin_password      = var.vm_admin_password
+  admin_username      = var.vm_admin_username
   network_interface_ids = [
     module.devbox_nic.network_interface_id
   ]
@@ -109,17 +109,17 @@ data "azurerm_public_ip" "chat-ip-data" {
 }
 
 resource "azurerm_virtual_machine_extension" "aad_login" {
-  name                 = "AADLoginForLinux"
-  virtual_machine_id   = azurerm_linux_virtual_machine.devbox-vm.id
-  publisher            = "Microsoft.Azure.ActiveDirectory.LinuxSSH"
-  type                 = "AADLoginForLinux"
-  type_handler_version = "1.0"
+  name                       = "AADLoginForLinux"
+  virtual_machine_id         = azurerm_linux_virtual_machine.devbox-vm.id
+  publisher                  = "Microsoft.Azure.ActiveDirectory.LinuxSSH"
+  type                       = "AADLoginForLinux"
+  type_handler_version       = "1.0"
   auto_upgrade_minor_version = true
   settings = jsonencode(
     {
-        "username": "${var.vm_admin_username}",
-        "ssh_key": "${file("~/.ssh/devbox.pub")}"
-    })
+      "username" : "${var.vm_admin_username}",
+      "ssh_key" : "${file("~/.ssh/devbox.pub")}"
+  })
 }
 
 output "public_ip_address" {

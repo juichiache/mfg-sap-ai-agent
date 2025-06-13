@@ -1,15 +1,21 @@
-variable "ai_foundry_name" {
+variable "eventgrid_system_topic_name" {
   type        = string
-  default     = "sap-agent-aifoundry"
-  description = "The name of the AI Foundry resource."
+  default     = "sap-agent-eventgrid"
+  description = "The name of the Event Grid resource."
 }
-variable "ai_foundry_storage_account_name" {
+variable "eventgrid_topic_type" {
   type        = string
-  description = "The name of the storage account to be used by AI Foundry."
+  default     = "Microsoft.Storage.StorageAccounts"
+  description = "The type of the Event Grid topic."
 }
-variable "ai_foundry_key_vault_id" {
+variable "eventgrid_event_subscription_name" {
   type        = string
-  description = "The ID of the Key Vault to be used by AI Foundry."
+  default     = "sap-agent-eventgrid-subscription"
+  description = "The name of the Event Grid event subscription."
+}
+variable "storage_account_id" {
+  type        = string
+  description = "The ARM ID of the storage account to be used by Event Grid."
 }
 variable "location" {
   type        = string
@@ -34,5 +40,5 @@ variable "suffix" {
 variable "environment" {
   type        = string
   default     = "sap-agent-environment"
-  description = "The name of the environment for the AI Foundry resource."
+  description = "The name of the environment for the Event Grid resource."
 }

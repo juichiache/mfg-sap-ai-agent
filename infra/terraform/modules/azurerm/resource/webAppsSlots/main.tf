@@ -3,7 +3,7 @@ variable "web_app_name" {
   type        = string
 }
 
-variable "slot_name"{
+variable "slot_name" {
   description = "The name of the slot for the web app."
   type        = string
 }
@@ -26,7 +26,7 @@ variable "app_settings" {
 
 variable "identity_type" {
   description = "The identity configuration for the web app slot."
-  type = string
-  default = "SystemAssigned"
+  type        = string
+  default     = "SystemAssigned"
 }
 

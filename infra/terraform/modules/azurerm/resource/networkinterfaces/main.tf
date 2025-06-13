@@ -1,6 +1,6 @@
 variable "deploy_vnet" {
   description = "The number of instances to create"
-  type        =  bool
+  type        = bool
   default     = false
 }
 variable "location" {
@@ -31,7 +31,7 @@ variable "subnet_name" {
 variable "ip_configuration_name" {
   description = "The name of the IP configuration"
   type        = string
-  default = "internal"
+  default     = "internal"
 }
 variable "network_interface_name" {
   description = "The name of the network interface"

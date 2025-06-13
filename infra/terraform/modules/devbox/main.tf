@@ -51,7 +51,7 @@ variable "vm_admin_password" {
   description = "The admin password for the virtual machine."
   type        = string
   default     = "P@ssw0rd1234!"
-}   
+}
 variable "nic_name" {
   description = "The name of the network interface."
   type        = string

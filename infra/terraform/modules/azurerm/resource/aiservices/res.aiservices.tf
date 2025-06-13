@@ -1,8 +1,8 @@
 resource "azurerm_ai_services" "ai_services" {
-  name                = "${var.ai_services_name}-${var.suffix}"
+  name                = "${var.environment}-${var.ai_services_name}-${var.suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  kind                = "AI"
+  kind                = var.ai_services_kind
   sku_name            = var.ai_services_sku_name
 
   public_network_access_enabled = true

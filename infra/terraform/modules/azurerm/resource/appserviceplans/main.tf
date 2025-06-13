@@ -13,7 +13,7 @@ variable "resource_group_name" {
   default     = "sap-agent-rg"
   description = "The name of the resource group where resources will be created."
 }
-variable "appserviceplan" {
+variable "appserviceplan_name" {
   type        = string
   default     = "sap-agent-appserviceplan"
   description = "The name of the App Service Plan."

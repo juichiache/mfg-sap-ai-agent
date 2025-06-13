@@ -1,15 +1,22 @@
-variable "ai_foundry_name" {
+variable "keyvault_name" {
   type        = string
-  default     = "sap-agent-aifoundry"
-  description = "The name of the AI Foundry resource."
+  default     = "sap-agent-keyvault"
+  description = "The name of the Key Vault resource."
 }
-variable "ai_foundry_storage_account_name" {
+variable "keyvault_sku_name" {
   type        = string
-  description = "The name of the storage account to be used by AI Foundry."
+  default     = "standard"
+  description = "The SKU for the Key Vault resource."
 }
-variable "ai_foundry_key_vault_id" {
-  type        = string
-  description = "The ID of the Key Vault to be used by AI Foundry."
+variable "keyvault_soft_delete_retention_days" {
+  type        = number
+  default     = 7
+  description = "The number of days to retain soft-deleted keys in the Key Vault."
+}
+variable "keyvault_purge_protection_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to enable purge protection for the Key Vault."
 }
 variable "location" {
   type        = string
@@ -34,5 +41,9 @@ variable "suffix" {
 variable "environment" {
   type        = string
   default     = "sap-agent-environment"
-  description = "The name of the environment for the AI Foundry resource."
+  description = "The name of the environment for the Key Vault resource."
+}
+variable "tenant_id" {
+  type        = string
+  description = "The tenant ID for the Azure subscription."
 }

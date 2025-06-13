@@ -6,7 +6,7 @@ variable "functionappname" {
 }
 variable "appserviceplan_kind" {
   type        = string
-  default     = "Linux"
+  default     = ""
   description = "The kind of App Service Plan (e.g., Linux, Windows)."
 }
 variable "location" {
@@ -41,4 +41,14 @@ variable "environment" {
   type        = string
   default     = "dev"
   description = "The environment for which the resources are being created (e.g., dev, prod)."
+}
+variable "docker_image" {
+  type        = string
+  default     = "mcr.microsoft.com/azure-functions/dotnet:4"
+  description = "The Docker image to use for the Function App."
+}
+variable "function_app_kind" {
+  type        = string
+  default     = "FlexConsumption"
+  description = "The kind of Function App (e.g., FlexConsumption, Consumption)."
 }

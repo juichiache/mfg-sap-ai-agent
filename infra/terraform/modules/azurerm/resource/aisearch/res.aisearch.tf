@@ -1,5 +1,5 @@
 resource "azurerm_search_service" "aisearch" {
-  name                   = "${var.aisearch_name}-${var.suffix}"
+  name                   = "${var.environment}-${var.aisearch_name}-${var.suffix}"
   location               = var.location
   resource_group_name    = var.resource_group_name
   custom_sub_domain_name = "${var.environment}-${var.aisearch_name}-${var.suffix}"

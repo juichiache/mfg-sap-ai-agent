@@ -1,7 +1,7 @@
 variable "environment" {
   description = "The environment (e.g., dev, prod)"
   type        = string
-  default = "dev"
+  default     = "dev"
 }
 variable "deploy_vnet" {
   description = "Flag to deploy the storage account"
@@ -52,4 +52,9 @@ variable "public_network_access_enabled" {
   description = "Flag to enable public network access"
   type        = bool
   default     = true
+}
+variable "suffix" {
+  description = "Suffix to append to resource names for uniqueness"
+  type        = string
+  default     = ""
 }

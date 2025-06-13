@@ -18,8 +18,11 @@ variable "suffix" {
   default     = ""
   description = "Suffix to append to resource names for uniqueness, typically derived from the environment or a random value."
 }
-
-variable "containerappname" {
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "The ID of the Log Analytics Workspace to use for logging."
+}
+variable "container_app_name" {
   type        = string
   default     = "sap-agent-containerapp"
   description = "The name of the Container App."

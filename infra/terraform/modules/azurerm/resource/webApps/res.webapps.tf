@@ -1,5 +1,5 @@
 resource "azurerm_linux_web_app" "web_app" {
-  name                                           = var.web_app_name
+  name                                           = "${var.environment}-${var.web_app_name}-${var.suffix}"
   resource_group_name                            = var.resource_group_name
   location                                       = var.resource_group_location
   service_plan_id                                = var.service_plan_id
@@ -8,7 +8,7 @@ resource "azurerm_linux_web_app" "web_app" {
   public_network_access_enabled                  = var.public_network_access_enabled ? false : true
   virtual_network_subnet_id                      = module.subnet[var.subnet_deployment[1].name].subnet_id
   webdeploy_publish_basic_authentication_enabled = false
-  app_settings = var.app_settings
+  app_settings                                   = var.app_settings
 
   site_config {
     always_on                         = var.site_config.always_on
@@ -26,7 +26,7 @@ resource "azurerm_linux_web_app" "web_app" {
       python_version = var.site_config.application_stack.python_version
     }
   }
-  
+
   identity {
     type = var.identity.type
   }
@@ -39,7 +39,7 @@ resource "azurerm_linux_web_app" "web_app" {
     failed_request_tracing  = var.logs.failed_request_tracing
     application_logs {
       file_system_level = var.logs.application_logs.file_system_level
-    }    
+    }
     http_logs {
       file_system {
         retention_in_days = var.logs.http_logs.file_system.retention_in_days
