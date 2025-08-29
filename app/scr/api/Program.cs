@@ -2,6 +2,7 @@ using Assistants.API;
 using Assistants.API.Core;
 using Assistants.Hub.API.M365;
 using Microsoft.Agents.Builder;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(options => options.SerializeAsV2 = true);
+    app.UseSwagger(options => options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0);
     app.UseSwaggerUI();
 }
 

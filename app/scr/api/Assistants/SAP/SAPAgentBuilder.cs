@@ -24,7 +24,7 @@ namespace Assistants.Hub.API.Assistants.SAP
 
         public async Task<AzureAIAgent> CreateAgentIfNotExistsAsync()
         {
-            var agentsClient = AzureAIAgent.CreateAgentsClient(_configuration["AIAgentEndpoint"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"]}));
+            var agentsClient = AzureAIAgent.CreateAgentsClient(_configuration["AIAgentEndpoint"], new DefaultAzureCredential(new DefaultAzureCredentialOptions { VisualStudioTenantId = _configuration["VisualStudioTenantId"] }));
 
             var tools = new List<FunctionToolDefinition>();
             foreach (var plugin in _kernel.Plugins)
@@ -35,9 +35,35 @@ namespace Assistants.Hub.API.Assistants.SAP
 
             var codeInterpreterToolResource = new CodeInterpreterToolResource();
 
+            // Try to find an existing agent by name
+            string agentName = "mfg-sap-agent";
+            PersistentAgent? existingAgentDefinition = null;
+
+            try
+            {
+                await foreach (var agentPageItem in agentsClient.Administration.GetAgentsAsync())
+                {
+                    if (string.Equals(agentPageItem.Name, agentName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        existingAgentDefinition = agentPageItem;
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+                // If listing is not supported or fails, proceed to creation
+            }
+
+            if (existingAgentDefinition is not null)
+            {
+                AzureAIAgent existingAgent = new(existingAgentDefinition, agentsClient, plugins: _kernel.Plugins);
+                return existingAgent;
+            }
+
             var definition = await agentsClient.Administration.CreateAgentAsync(
-                _configuration["AOAIStandardChatGptDeployment"],//"gpt-4o",
-                name: "mfg-sap-agent",
+                _configuration["AOAIStandardChatGptDeployment"], // "gpt-4o",
+                name: agentName,
                 instructions: LoadEmbeddedResource("Assistants.Hub.API.Services.Prompts.SAPAgentSystemPrompt.txt"),
                 tools: new List<ToolDefinition>() { new CodeInterpreterToolDefinition() },
                 toolResources: new ToolResources() { CodeInterpreter = codeInterpreterToolResource });
