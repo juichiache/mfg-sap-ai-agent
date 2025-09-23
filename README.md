@@ -2,6 +2,19 @@
 
 This repo is an example of a Microsoft 365 Agent that can be used to interact with SAP systems. It is built using the Microsoft AI Agent framework and is designed to be deployed in M365 Copilot Chat & Microsoft Teams. The agent can be used to query SAP data, correlate with external data sources (such as Bing for getting recent tariff information & Azure Maps for weather information).
 
+## Interface
+
+### Overview
+![m365-copilot-chat-overview](./.img/m365-copilot-chat-overview.png)
+
+### Results
+
+![m365-copilot-chat-overview](./.img/m365-copilot-chat-analysis-1.png)
+
+![m365-copilot-chat-overview](./.img/m365-copilot-chat-analysis-2.png)
+
+![m365-copilot-chat-overview](./.img/m365-copilot-chat-analysis-3.png)
+
 ## Architecture
 
 ![Architecture](./.img/architecture.drawio.png)
